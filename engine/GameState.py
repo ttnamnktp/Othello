@@ -10,6 +10,13 @@ class GameState:
         self.board[size // 2 - 1][size // 2] = 'B'
         self.board[size // 2][size // 2 - 1] = 'B'
         self.current_player = 'B'  # B: Black, W: White
+        self.move_log = []
+
+    def undo_move(self):
+        if len(self.move_log) == 0:
+            return False
+        self.current_player = 'B' if self.current_player == 'W' else 'W'
+        self.board = self.move_log[-2]
 
     def flip_disks(self, move):
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1),
