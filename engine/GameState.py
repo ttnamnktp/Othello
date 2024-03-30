@@ -17,6 +17,8 @@ class GameState:
             return False
         self.current_player = 'B' if self.current_player == 'W' else 'W'
         self.board = self.move_log[-2]
+        self.move_log = self.move_log[:-2]
+        return True
 
     def flip_disks(self, move):
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1),
