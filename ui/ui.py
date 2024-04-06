@@ -36,3 +36,62 @@ class SimpleScene:
 
     def element(self, events):
         pass
+
+class ChooseScene:
+    def __init__(self, title, *texts):
+        self.background = pygame.Surface((WIDTH, HEIGHT))
+        self.background = pygame.Surface((WIDTH, HEIGHT))
+        bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (WIDTH, HEIGHT))
+        self.background.blit(bg, (-1, 0))
+        self.rects = []
+        self.texts = texts
+        self.title = title
+
+    def draw(self, screen):
+        screen.blit(self.background, (0, 0))
+        n = 1
+
+        for text in self.texts:
+            font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
+            text = font.render(text, True, pygame.Color(144, 8, 8))
+            textRect = text.get_rect()
+            textRect.center = (640 // 2, (HEIGHT // 8 + HEIGHT // 5 * n))
+            rect = pygame.Rect((WIDTH - WIDTH_BOX) // 2, textRect.top, WIDTH_BOX, HEIGHT_BOX)
+            self.rects.append(rect)
+            n += 1
+            if rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.draw.rect(screen, pygame.Color(120, 200, 112), rect)
+            pygame.draw.rect(screen, pygame.Color(120, 8, 8), rect, 5)
+            screen.blit(text, textRect)
+
+            font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 40)
+            text = font.render(self.title, True, pygame.Color(144, 8, 8))
+            textRect = text.get_rect()
+            textRect.center = (WIDTH // 2, HEIGHT // 6)
+            screen.blit(text, textRect)
+            play = pygame.transform.scale(pygame.image.load("ui/image/back.png"), (
+                pygame.image.load("UI/image/back.png").get_width() // 6,
+                pygame.image.load("UI/image/back.png").get_height() // 6))
+            self.playRect = play.get_rect()
+            self.playRect.center = (WIDTH // 2, HEIGHT // 1.12)
+            screen.blit(play, self.playRect)
+
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.playRect.collidepoint(event.pos):
+                    return ('TITLE')
+
+    def element(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                n = 1
+                for rect in self.rects:
+                    if rect.collidepoint(event.pos):
+                        if (n == 1):
+                            return (True, True)
+                        if (n == 2):
+                            return (True, False)
+                        if (n == 3):
+                            return (False, False)
+                    n += 1
