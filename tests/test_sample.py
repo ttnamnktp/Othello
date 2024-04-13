@@ -5,13 +5,14 @@ from engine.Move import Move
 def test_sample():
     # Step 1: Initial the board
     state = GameState()
-    print(" ")
-    
+    print()
+
     # Step 2: Suggest valid moves
     valid_moves = Move.get_valid_moves(state)
     print(valid_moves)  # [(2, 3), (3, 2), (4, 5), (5, 4)]
 
     # Step 3: Choose move then update the board and flip
+    print(state.current_player)
     make_move = Move.make_move(state, (2, 3))
     print(make_move)  # True
 
@@ -20,6 +21,7 @@ def test_sample():
     print(valid_moves)
 
     # Step 5: Choose move then update the board and flip
+    print(state.current_player)
     make_move = Move.make_move(state, (4, 2))
     print(make_move)  # True
 
