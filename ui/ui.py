@@ -1,11 +1,17 @@
 import pygame
 
-WIDTH = 640
-HEIGHT = 480
+# WIDTH = 640
+# HEIGHT = 480
+WIDTH = 832
+HEIGHT = 512
+B_WIDTH = B_HEIGHT = 512 #board_width and board_height
+DIMENSION = 8
+SQ_SIZE = B_HEIGHT // DIMENSION #square_size
 HEIGHT_BOX = 50
 WIDTH_BOX = 400
 NUMBER_DEPTH = 4
 WIDTH_PER_BOX = WIDTH_BOX // NUMBER_DEPTH
+IMAGES = {}
 
 class SimpleScene:
     def __init__(self, text):
@@ -94,7 +100,7 @@ class ChooseScene:
             font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
             text = font.render(text, True, pygame.Color(144, 8, 8))
             textRect = text.get_rect()
-            textRect.center = (640 // 2, (HEIGHT // 8 + HEIGHT // 5 * n))
+            textRect.center = (WIDTH // 2, (HEIGHT // 8 + HEIGHT // 5 * n))
             rect = pygame.Rect((WIDTH - WIDTH_BOX) // 2, textRect.top, WIDTH_BOX, HEIGHT_BOX)
             self.rects.append(rect)
             n += 1
@@ -102,18 +108,6 @@ class ChooseScene:
                 pygame.draw.rect(screen, pygame.Color(120, 200, 112), rect)
             pygame.draw.rect(screen, pygame.Color(120, 8, 8), rect, 5)
             screen.blit(text, textRect)
-
-            # font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 40)
-            # text = font.render(self.title, True, pygame.Color(144, 8, 8))
-            # textRect = text.get_rect()
-            # textRect.center = (WIDTH // 2, HEIGHT // 6)
-            # screen.blit(text, textRect)
-            # play = pygame.transform.scale(pygame.image.load("ui/image/back.png"), (
-            #     pygame.image.load("UI/image/back.png").get_width() // 6,
-            #     pygame.image.load("UI/image/back.png").get_height() // 6))
-            # self.playRect = play.get_rect()
-            # self.playRect.center = (WIDTH // 2, HEIGHT // 1.12)
-            # screen.blit(play, self.playRect)
 
     def update(self, events):
         for event in events:
@@ -136,20 +130,49 @@ class ChooseScene:
                     n += 1
 
 class ChessboardScene:
-    def __init__(self, title, game_state):
+    def __init__(self, title, gs):
+        self.background = pygame.Surface((WIDTH, HEIGHT))
+        bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (B_WIDTH, B_HEIGHT))
+        self.background.blit(bg, (-1, 0))
         self.title = title
-        self.game_state = game_state
+        self.gs = gs
 
+    """
+    Response for all the graphics within a current game state
+    """
+    
     def draw(self, screen):
         # Display the game state on the screen
         font = pygame.font.Font(None, 36)
         text = font.render(self.title, True, (255, 255, 255))
         screen.blit(text, (10, 10))
+        board = self.gs.board
+
+        # load images of pieces in the chess board
+        pieces = ['W', 'B']
+        for piece in pieces:
+            IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
 
         # Draw the chessboard
-        for row in range(self.game_state.size):
-            for col in range(self.game_state.size):
-                pygame.draw.rect(screen, (255, 255, 255), (col * 50, row * 50, 50, 50), 1)
+        colors = [pygame.Color("dark green"), pygame.Color("dark green")]
+        for r in range(DIMENSION):
+            for c in range(DIMENSION):
+                color = colors[((r+c)%2)]
+                pygame.draw.rect(screen, color, pygame.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
+        # Draw grid lines
+        for r in range(DIMENSION + 1):  # Horizontal lines
+            pygame.draw.line(screen, pygame.Color("black"), (0, r * SQ_SIZE), (B_WIDTH, r * SQ_SIZE))
+        for c in range(DIMENSION + 1):  # Vertical lines
+            pygame.draw.line(screen, pygame.Color("black"), (c * SQ_SIZE, 0), (c * SQ_SIZE, HEIGHT))
+
+        # Draw the each piece of the chessboard
+        for r in range(DIMENSION):
+            for c in range(DIMENSION):
+                piece = board[r][c]
+                if piece != " ": #not empty square
+                    screen.blit(IMAGES[piece], pygame.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
 
     def update(self, events):
         pass
