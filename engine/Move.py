@@ -4,15 +4,6 @@ class Move:
         self.col = col
 
     @staticmethod
-    def get_valid_moves(game_state):
-        valid_moves = []
-        for i in range(game_state.size):
-            for j in range(game_state.size):
-                if Move.is_valid_move(game_state, i, j):
-                    valid_moves.append((i, j))
-        return valid_moves
-
-    @staticmethod
     def is_valid_move(game_state, row, col):
         if game_state.board[row][col] != ' ':
             return False
@@ -34,12 +25,44 @@ class Move:
         return False
 
     @staticmethod
-    def make_move(game_state, move):
-        row, col = move  # unpack the tuple
-        if Move.is_valid_move(game_state, row, col):
-            game_state.board[row][col] = game_state.current_player
-            game_state.flip_disks(move)
+    def get_valid_moves(game_state):
+        valid_moves = []
+        for i in range(game_state.size):
+            for j in range(game_state.size):
+                if Move.is_valid_move(game_state, i, j):
+                    valid_moves.append((i, j))
+        return valid_moves
+
+    @staticmethod
+    def check_valid_moves_and_set_pass(game_state):
+        valid_moves = Move.get_valid_moves(game_state)
+        if not valid_moves:
+            if game_state.current_player == 'B':
+                game_state.black_pass = True
+            else:
+                game_state.white_pass = True
+
             game_state.current_player = 'W' if game_state.current_player == 'B' else 'B'
-            return True
-        else:
+
+        return valid_moves
+
+    @staticmethod
+    def undo_move(game_state):
+        if len(game_state.board_log) == 0:
             return False
+
+        pre_board, pre_player = game_state.board_log[-2]
+
+        game_state.current_player = pre_player
+        game_state.board = pre_board
+        game_state.board_log = game_state.board_log[:-1]
+        return True
+
+    @staticmethod
+    def make_move(game_state, move):
+        row, col = move
+        game_state.board[row][col] = game_state.current_player
+        game_state.flip_disks(move)
+        game_state.board_log.append(
+            (game_state.board, game_state.current_player))
+        game_state.current_player = 'W' if game_state.current_player == 'B' else 'B'
