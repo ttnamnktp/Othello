@@ -8,7 +8,7 @@ from engine.Move import Move
 class Random(SearchAlgorithm):
     """Chooses a random move."""
 
-    def find_move(self, game_state, depth=1):
+    def find_move(self, game_state: GameState(), depth=1):
         valid_moves = Move.get_valid_moves(game_state)
         return random.choice(valid_moves)
 
