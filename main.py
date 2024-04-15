@@ -1,6 +1,6 @@
 import pygame
 import time
-from ui.ui import *
+from UI.ui import *
 from engine.GameState import GameState
 
 WIDTH = 832

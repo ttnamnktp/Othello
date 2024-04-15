@@ -10,7 +10,7 @@ WIDTH_PER_BOX = WIDTH_BOX // NUMBER_DEPTH
 class SimpleScene:
     def __init__(self, text):
         self.background = pygame.Surface((WIDTH, HEIGHT))
-        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (WIDTH, HEIGHT))
+        bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (WIDTH, HEIGHT))
         self.background.blit(bg, (-1, 0))
         self.text = text
 
@@ -23,14 +23,14 @@ class SimpleScene:
         textRect.center = (WIDTH // 2, HEIGHT // 5)
 
         screen.blit(text, textRect)
-        play = pygame.transform.scale(pygame.image.load("ui/image/start.png"), (
+        play = pygame.transform.scale(pygame.image.load("UI/image/start.png"), (
             pygame.image.load("UI/image/start.png").get_width() // 6,
             pygame.image.load("UI/image/start.png").get_height() // 6))
         self.playRect = play.get_rect()
         self.playRect.center = (WIDTH // 2, HEIGHT // 2)
         screen.blit(play, self.playRect)
         
-        help = pygame.transform.scale(pygame.image.load("ui/image/help.png"), (
+        help = pygame.transform.scale(pygame.image.load("UI/image/help.png"), (
             pygame.image.load("UI/image/help.png").get_width() // 9,
             pygame.image.load("UI/image/help.png").get_height() // 9))
         self.helpRect = help.get_rect()
@@ -53,7 +53,7 @@ class SimpleScene:
 class HelpScene:
     def __init__(self, title, *texts):
         self.background = pygame.Surface((WIDTH, HEIGHT))
-        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (WIDTH, HEIGHT))
+        bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (WIDTH, HEIGHT))
         self.background.blit(bg, (-1, 0))
         self.texts = texts
         self.title = title
@@ -63,14 +63,14 @@ class HelpScene:
         n = 1
 
         for text in self.texts:
-            font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
+            font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
             text = font.render(text, True, pygame.Color(144, 8, 8))
             textRect = text.get_rect()
             textRect.center = (WIDTH // 2, (HEIGHT // 8 + HEIGHT // 5 * n))
             screen.blit(text, textRect)
             n += 1
 
-        font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 40)
+        font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 40)
         text = font.render(self.title, True, pygame.Color(144, 8, 8))
         textRect = text.get_rect()
         textRect.center = (WIDTH // 2, HEIGHT // 6)
@@ -91,7 +91,7 @@ class ChooseScene:
         n = 1
 
         for text in self.texts:
-            font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
+            font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
             text = font.render(text, True, pygame.Color(144, 8, 8))
             textRect = text.get_rect()
             textRect.center = (640 // 2, (HEIGHT // 8 + HEIGHT // 5 * n))
@@ -108,7 +108,7 @@ class ChooseScene:
             # textRect = text.get_rect()
             # textRect.center = (WIDTH // 2, HEIGHT // 6)
             # screen.blit(text, textRect)
-            # play = pygame.transform.scale(pygame.image.load("ui/image/back.png"), (
+            # play = pygame.transform.scale(pygame.image.load("UI/image/back.png"), (
             #     pygame.image.load("UI/image/back.png").get_width() // 6,
             #     pygame.image.load("UI/image/back.png").get_height() // 6))
             # self.playRect = play.get_rect()
