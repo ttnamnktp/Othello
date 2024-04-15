@@ -11,6 +11,10 @@ class GameState:
         self.board[size // 2][size // 2 - 1] = 'B'
         self.current_player = 'B'  # B: Black, W: White
         self.move_log = []
+        self.black_count = sum(row.count('B') for row in self.board)
+        self.white_count = sum(row.count('W') for row in self.board)
+        self.black_pass = False
+        self.white_pass = False
 
     def undo_move(self):
         if len(self.move_log) == 0:
@@ -35,5 +39,22 @@ class GameState:
                 for flipped_row, flipped_col in flipped_disks:
                     self.board[flipped_row][flipped_col] = self.current_player
 
+    def player_unable_to_move(self):
+        """Check if the current player is unable to move. If so, pass the turn to the other player."""
+        unable_to_move = len(Move.get_valid_moves(self)) == 0
+        if not unable_to_move:
+            return False
+        if self.current_player == 'B':
+            self.black_pass = True
+        else:
+            self.white_pass = True
+        return True
+
+    def pass_player(self):
+        """Pass the turn to the other player."""
+        print(f"{self.current_player} has no valid moves.")
+        self.current_player = 'W' if self.current_player == 'B' else 'B'
+
     def is_game_over(self):
-        return len(Move.get_valid_moves(self)) == 0
+        """Check if the game is over."""
+        return self.black_pass and self.white_pass
