@@ -28,8 +28,8 @@ def ai_plays_itself(ai: AI):
     print("Initial State")
     while not state.is_game_over():
         print_state(state)
-        if state.player_unable_to_move():
-            state.pass_player()
+        valid_moves = Move.check_valid_moves_and_set_pass(state)
+        if not valid_moves:
             continue
         best_move = ai.return_best_move(state)
         print_current_move(state, best_move)

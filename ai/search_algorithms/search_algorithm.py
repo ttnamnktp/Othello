@@ -17,8 +17,7 @@ class SearchAlgorithm(ABC):
 
     @abstractmethod
     def find_move(self, game_state: GameState(), depth: int) -> (int, int):
-        """Find the best move for the current player, given the current state of the board and how far it looks into
-        the future."""
+        """Find the best move for the current player, given the available moves and depth of the search tree."""
         pass
 
     @abstractmethod
