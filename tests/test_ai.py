@@ -25,17 +25,19 @@ def ai_plays_itself(ai: AI):
     """Test the AI by making it play against itself."""
     state = GameState()
     print()
-
     print("Initial State")
-    print_state(state)
     while not state.is_game_over():
+        print_state(state)
+        if state.player_unable_to_move():
+            state.pass_player()
+            continue
         best_move = ai.return_best_move(state)
         print_current_move(state, best_move)
-        print_state(state=ai.return_next_state(state, best_move))
+        state = ai.return_next_state(state, best_move)
     print("Game Over")
 
 
 def test_sample():
-    random_ai = AI(heuristic=CoinParity(), algorithm=Random(), depth=1)
-    greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy(), depth=1)
-    ai_plays_itself(ai=random_ai)
+    random_ai = AI(heuristic=CoinParity(), algorithm=Random, depth=1)
+    greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy, depth=1)
+    ai_plays_itself(ai=greedy_ai)
