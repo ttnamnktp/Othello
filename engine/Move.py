@@ -1,3 +1,6 @@
+import copy
+
+
 class Move:
     def __init__(self, row, col):
         self.row = row
@@ -61,8 +64,9 @@ class Move:
     @staticmethod
     def make_move(game_state, move):
         row, col = move
+        game_state.board_log.append(
+            (copy.deepcopy(game_state.board), game_state.current_player))
+
         game_state.board[row][col] = game_state.current_player
         game_state.flip_disks(move)
-        game_state.board_log.append(
-            (game_state.board, game_state.current_player))
         game_state.current_player = 'W' if game_state.current_player == 'B' else 'B'
