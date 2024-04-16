@@ -23,6 +23,3 @@ class Greedy(SearchAlgorithm):
         if candidate_best_move:  # Check if the list is not empty
             best_move = random.choice(candidate_best_move)
         return best_move
-
-    def evaluate(self, game_state):
-        return self.heuristic.evaluate(game_state)
