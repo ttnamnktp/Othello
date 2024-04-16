@@ -55,21 +55,33 @@ class Move:
             return False
 
         pre_state = game_state.state_log[-2]
-        game_state.board = pre_state.board
-        game_state.current_player = pre_state.current_player
-        game_state.state_log = pre_state.state_log
-        game_state.black_count = pre_state.black_count
-        game_state.white_count = pre_state.white_count
-        game_state.black_pass = pre_state.black_pass
-        game_state.white_pass = pre_state.white_pass
+        game_state.board = pre_state['board']
+        game_state.current_player = pre_state['current_player']
+        game_state.state_log = pre_state['state_log']
+        game_state.black_count = pre_state['black_count']
+        game_state.white_count = pre_state['white_count']
+        game_state.black_pass = pre_state['black_pass']
+        game_state.white_pass = pre_state['white_pass']
 
         return True
 
     @staticmethod
     def make_move(game_state, move):
         row, col = move
-        game_state.state_log.append(copy.deepcopy(game_state))
+        cur_state = {
+            'board': [row.copy() for row in game_state.board],
+            'current_player': game_state.current_player,
+            'state_log': [state.copy() for state in game_state.state_log],
+            'black_count': game_state.black_count,
+            'white_count': game_state.white_count,
+            'black_pass': game_state.black_pass,
+            'white_pass': game_state.white_pass,
+        }
+
+        game_state.state_log.append(cur_state)
 
         game_state.board[row][col] = game_state.current_player
         game_state.flip_disks(move)
+        game_state.black_count = sum(row.count('B') for row in game_state.board)
+        game_state.white_count = sum(row.count('W') for row in game_state.board)
         game_state.current_player = 'W' if game_state.current_player == 'B' else 'B'

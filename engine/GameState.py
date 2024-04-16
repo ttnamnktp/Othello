@@ -10,7 +10,7 @@ class GameState:
         self.board[size // 2 - 1][size // 2] = 'B'
         self.board[size // 2][size // 2 - 1] = 'B'
         self.current_player = 'B'  # B: Black, W: White
-        self.state_log = []
+        self.state_log = []  # Dictionary of state
         self.black_count = sum(row.count('B') for row in self.board)
         self.white_count = sum(row.count('W') for row in self.board)
         self.black_pass = False
@@ -33,3 +33,12 @@ class GameState:
 
     def is_game_over(self):
         return self.black_pass and self.white_pass
+
+    def get_winner(self):
+        print(f"Black: {self.black_count}, White: {self.white_count}")
+        if self.black_count > self.white_count:
+            return 'B'
+        elif self.black_count < self.white_count:
+            return 'W'
+        else:
+            return 'Tie'
