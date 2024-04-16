@@ -44,7 +44,12 @@ def test_sample():
     print("-----------------------------------")
     print_state(state)
 
-    # # Step 7: undo move
+    # print("-----------------------------------")
+    # print("State log: ")
+    # for pre_state in state.state_log:
+    #     print_state(pre_state)
+
+    # Step 7: undo move
     undo_move = Move.undo_move(state)
     print("-----------------------------------")
     print(undo_move)

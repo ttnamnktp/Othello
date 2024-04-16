@@ -10,7 +10,7 @@ class GameState:
         self.board[size // 2 - 1][size // 2] = 'B'
         self.board[size // 2][size // 2 - 1] = 'B'
         self.current_player = 'B'  # B: Black, W: White
-        self.board_log = []  # (board, player)
+        self.state_log = []
         self.black_count = sum(row.count('B') for row in self.board)
         self.white_count = sum(row.count('W') for row in self.board)
         self.black_pass = False
