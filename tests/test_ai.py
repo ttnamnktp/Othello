@@ -40,6 +40,6 @@ def ai_plays_itself(ai: AI):
 
 
 def test_sample():
-    random_ai = AI(heuristic=CoinParity(), algorithm=Random, depth=1)
+    random_ai = AI(heuristic=None, algorithm=Random, depth=1)
     greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy, depth=1)
     ai_plays_itself(ai=greedy_ai)

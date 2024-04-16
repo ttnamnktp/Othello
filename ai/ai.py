@@ -1,4 +1,3 @@
-from ai.heuristics.heuristic import Heuristic
 from ai.search_algorithms.search_algorithm import SearchAlgorithm
 from engine.GameState import GameState
 from engine.Move import Move
@@ -7,7 +6,7 @@ from engine.Move import Move
 class AI:
     """A class that uses a heuristic and search algorithm to make moves."""
 
-    def __init__(self, heuristic: Heuristic, algorithm: type(SearchAlgorithm), depth):
+    def __init__(self, heuristic, algorithm: type(SearchAlgorithm), depth):
         self.heuristic = heuristic
         self.depth = depth
         self.algorithm = algorithm(heuristic=self.heuristic)
