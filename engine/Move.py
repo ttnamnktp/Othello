@@ -1,3 +1,6 @@
+import copy
+
+
 class Move:
     def __init__(self, row, col):
         self.row = row
@@ -48,21 +51,25 @@ class Move:
 
     @staticmethod
     def undo_move(game_state):
-        if len(game_state.board_log) == 0:
+        if len(game_state.state_log) == 0:
             return False
 
-        pre_board, pre_player = game_state.board_log[-2]
+        pre_state = game_state.state_log[-2]
+        game_state.board = pre_state.board
+        game_state.current_player = pre_state.current_player
+        game_state.state_log = pre_state.state_log
+        game_state.black_count = pre_state.black_count
+        game_state.white_count = pre_state.white_count
+        game_state.black_pass = pre_state.black_pass
+        game_state.white_pass = pre_state.white_pass
 
-        game_state.current_player = pre_player
-        game_state.board = pre_board
-        game_state.board_log = game_state.board_log[:-1]
         return True
 
     @staticmethod
     def make_move(game_state, move):
         row, col = move
+        game_state.state_log.append(copy.deepcopy(game_state))
+
         game_state.board[row][col] = game_state.current_player
         game_state.flip_disks(move)
-        game_state.board_log.append(
-            (game_state.board, game_state.current_player))
         game_state.current_player = 'W' if game_state.current_player == 'B' else 'B'

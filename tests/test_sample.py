@@ -9,7 +9,8 @@ def print_state(state):
 
 # 1. Check is end game
 # 2. Suggest valid moves and set pass
-# 3. Choose move then update the board and flip
+# 3. Save current board and player to board_log
+# 4. Choose move then update the board and flip
 
 
 def test_sample():
@@ -43,8 +44,14 @@ def test_sample():
     print("-----------------------------------")
     print_state(state)
 
+    # print("-----------------------------------")
+    # print("State log: ")
+    # for pre_state in state.state_log:
+    #     print_state(pre_state)
+
     # Step 7: undo move
     undo_move = Move.undo_move(state)
     print("-----------------------------------")
     print(undo_move)
+    print("After undo move: ")
     print_state(state)
