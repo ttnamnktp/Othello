@@ -34,7 +34,9 @@ def ai_plays_itself(ai: AI):
         best_move = ai.return_best_move(state)
         print_current_move(state, best_move)
         state = ai.return_next_state(state, best_move)
+
     print("Game Over")
+    print("Winner:", state.get_winner())
 
 
 def test_sample():
