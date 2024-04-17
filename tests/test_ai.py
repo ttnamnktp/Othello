@@ -1,6 +1,7 @@
 from ai.ai import AI
 from ai.heuristics.coin_parity import CoinParity
 from ai.search_algorithms.greedy import Greedy
+from ai.search_algorithms.minimax import Minimax
 from ai.search_algorithms.random import Random
 from engine.GameState import GameState
 from engine.Move import Move
@@ -42,4 +43,7 @@ def ai_plays_itself(ai: AI):
 def test_sample():
     random_ai = AI(heuristic=None, algorithm=Random, depth=1)
     greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy, depth=1)
-    ai_plays_itself(ai=greedy_ai)
+    minimax_ai = AI(heuristic=CoinParity(), algorithm=Minimax, depth=5)
+    minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=Minimax, depth=5)
+    # ai_plays_itself(ai=minimax_ai)
+    ai_plays_itself(ai=minimax_alpha_beta_ai)

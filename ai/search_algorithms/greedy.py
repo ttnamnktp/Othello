@@ -5,7 +5,9 @@ from engine.Move import Move
 
 
 class Greedy(SearchAlgorithm):
-    """Looks ahead one move and chooses the move that maximizes the heuristic."""
+    """Looks ahead one move and chooses the move that optimizes the heuristic.
+    Minimax lite.
+    """
 
     def find_move(self, game_state, depth=1):
         candidate_best_move = []
