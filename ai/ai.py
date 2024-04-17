@@ -6,10 +6,9 @@ from engine.Move import Move
 class AI:
     """A class that uses a heuristic and search algorithm to make moves."""
 
-    def __init__(self, heuristic, algorithm: type(SearchAlgorithm), depth):
-        self.heuristic = heuristic
+    def __init__(self, heuristic, algorithm: type(SearchAlgorithm), depth, run_time=0.5):
         self.depth = depth
-        self.algorithm = algorithm(heuristic=self.heuristic)
+        self.algorithm = algorithm(heuristic, run_time)
 
     def return_best_move(self, game_state: GameState):
         """Returns the best move based on the current game state."""

@@ -10,9 +10,11 @@ class SearchAlgorithm(ABC):
     When it reaches the maximum depth, it will evaluate the game state using a heuristic function.
     """
 
-    def __init__(self, heuristic=None):
+    def __init__(self, heuristic=None, run_time=0.5):
         """Initializes the search algorithm with a heuristic function."""
         self.heuristic = heuristic
+        self.start_time = None
+        self.run_time = run_time
 
     @abstractmethod
     def find_move(self, game_state: GameState(), depth: int) -> (int, int):
