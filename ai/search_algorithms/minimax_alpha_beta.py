@@ -18,12 +18,8 @@ class MinimaxAlphaBeta(SearchAlgorithm):
             next_state = self.create_copy(game_state)
             Move.make_move(next_state, move)
             score = self.minimax(next_state, depth, game_state.current_player == 'W', float('-inf'), float('inf'))
-            if game_state.current_player == 'W' and score > best_score:
-                best_score = score
-                best_move = move
-                candidate_best_move.clear()
-                candidate_best_move.append(move)
-            elif game_state.current_player == 'B' and score < best_score:
+            compare = score < best_score if next_state.current_player == 'W' else score > best_score
+            if compare:
                 best_score = score
                 best_move = move
                 candidate_best_move.clear()
@@ -37,9 +33,9 @@ class MinimaxAlphaBeta(SearchAlgorithm):
     def minimax(self, game_state: GameState, depth: int, is_maximizing: bool, alpha: float, beta: float) -> int:
         """Minimax algorithm with Alpha-Beta pruning.
         Prunes the tree by eliminating branches that cannot possibly improve the result.
-        Stops searching after reaching the maximum depth or when the game is over or after 0.5 seconds.
+        Stops searching after reaching the maximum depth or when the game is over or after the run time limit.
         """
-        if depth == 0 or game_state.is_game_over() or time.time() - self.start_time > 0.5:
+        if depth == 0 or game_state.is_game_over() or time.time() - self.start_time > self.run_time:
             return self.evaluate(game_state)
 
         if is_maximizing:
