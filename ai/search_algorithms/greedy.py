@@ -22,8 +22,9 @@ class Greedy(SearchAlgorithm):
             if compare:
                 best_score = score
                 best_move = move
+                candidate_best_move.clear()
                 candidate_best_move.append(move)
-            else:
+            elif score == best_score:
                 candidate_best_move.append(move)
         if candidate_best_move:  # Check if the list is not empty
             best_move = random.choice(candidate_best_move)

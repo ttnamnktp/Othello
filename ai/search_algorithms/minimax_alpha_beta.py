@@ -24,7 +24,7 @@ class MinimaxAlphaBeta(SearchAlgorithm):
                 best_move = move
                 candidate_best_move.clear()
                 candidate_best_move.append(move)
-            else:
+            elif score == best_score:
                 candidate_best_move.append(move)
         if candidate_best_move:
             best_move = random.choice(candidate_best_move)
