@@ -4,7 +4,9 @@ from ui.ui import *
 from engine.GameState import GameState
 
 WIDTH = 832
-HEIGHT = 512
+# HEIGHT = 512
+HEIGHT = 640
+
 # C_DIMENSION = 9
 # R_DIMENSION = 11
 # SQ_SIZE = 64
