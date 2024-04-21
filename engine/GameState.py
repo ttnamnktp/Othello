@@ -1,6 +1,5 @@
 from .Move import Move
 
-
 class GameState:
     def __init__(self, size=8):
         self.size = size
@@ -42,3 +41,22 @@ class GameState:
             return 'W'
         else:
             return 'Tie'
+
+    def generate_states(self):
+
+        states = []
+
+        moves = Move.get_valid_moves(self)
+
+        for move in moves:
+            game_state = GameState()
+            row, col = move
+            game_state.board[row][col] = game_state.current_player
+            game_state.flip_disks(move)
+            game_state.black_count = sum(row.count('B') for row in game_state.board)
+            game_state.white_count = sum(row.count('W') for row in game_state.board)
+            game_state.current_player = 'W' if game_state.current_player == 'B' else 'B'
+
+            states.append([game_state, move])
+
+        return states
