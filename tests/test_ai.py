@@ -1,6 +1,7 @@
 from ai.ai import AI
 from ai.heuristics.coin_parity import CoinParity
 from ai.heuristics.corners_captured import CornersCaptured
+from ai.heuristics.static_weight import StaticWeight
 from ai.search_algorithms.greedy import Greedy
 from ai.search_algorithms.minimax import Minimax
 from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
@@ -71,24 +72,28 @@ def ai_vs_ai(bot1: AI, bot2: AI):
 
 
 def test_sample():
-    # random_ai = AI(heuristic=None, algorithm=Random, depth=1)
-    greedy_ai = AI(heuristic=CoinParity(),
-                   algorithm=Greedy, depth=3, run_time=1)
-    # minimax_ai = AI(heuristic=CoinParity(), algorithm=Minimax, depth=3)
+    # Initialize the AI with the heuristic and search algorithm
 
-    # minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
+    # random_ai = AI(heuristic=None, algorithm=Random, depth=1)
+    greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy, depth=3, run_time=1)
+    minimax_ai_coin_parity = AI(heuristic=CoinParity(), algorithm=Minimax, depth=3, run_time=1)
+    minimax_ai_corners_captured = AI(heuristic=CornersCaptured(), algorithm=Minimax, depth=3, run_time=1)
+    minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=MinimaxAlphaBeta, depth=3, run_time=1)
+    minimax_static_weight = AI(heuristic=StaticWeight(), algorithm=Minimax, depth=3, run_time=1)
+
+    # Test the AI by making it play against itself
     # ai_plays_itself(ai=random_ai)
     # ai_plays_itself(ai=greedy_ai)
     # ai_plays_itself(ai=minimax_ai)
     # ai_plays_itself(ai=minimax_alpha_beta_ai)
+    # ai_plays_itself(ai=minimax_static_weight)
+
+    # Test the AI by making it play against another AI
+    # ai_vs_ai(bot1=greedy_ai, bot2=minimax_ai_corners_captured)
     # ai_vs_ai(bot1=random_ai, bot2=greedy_ai)
     # ai_vs_ai(bot1=minimax_ai, bot2=greedy_ai)
     # ai_vs_ai(bot1=minimax_ai, bot2=minimax_alpha_beta_ai)
     # ai_vs_ai(bot1=minimax_alpha_beta_ai, bot2=greedy_ai)
-
-    minimax_ai_corners_captured = AI(
-        heuristic=CornersCaptured(), algorithm=Minimax, depth=3, run_time=1)
-    # ai_vs_ai(bot1=greedy_ai, bot2=minimax_ai_corners_captured)
 
     score = {
         'B': 0,
@@ -96,8 +101,8 @@ def test_sample():
         'Tie': 0
     }
 
-    for i in range(100):
-        winner = ai_vs_ai(bot1=greedy_ai, bot2=minimax_ai_corners_captured)
+    for i in range(150):
+        winner = ai_vs_ai(bot1=minimax_ai_coin_parity, bot2=minimax_static_weight)
         score[winner] += 1
 
     print(score)
