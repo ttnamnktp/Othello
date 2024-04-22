@@ -5,7 +5,6 @@ from ai.heuristics.static_weight import StaticWeight
 from ai.search_algorithms.greedy import Greedy
 from ai.search_algorithms.minimax import Minimax
 from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
-from ai.search_algorithms.random import Random
 from engine.GameState import GameState
 from engine.Move import Move
 
@@ -76,11 +75,12 @@ def test_sample():
 
     # random_ai = AI(heuristic=None, algorithm=Random, depth=1)
     greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy, depth=3, run_time=1)
+    greedy_ai_static_weight = AI(heuristic=StaticWeight(), algorithm=Greedy, depth=3, run_time=1)
     minimax_ai_coin_parity = AI(heuristic=CoinParity(), algorithm=Minimax, depth=3, run_time=1)
     minimax_ai_corners_captured = AI(heuristic=CornersCaptured(), algorithm=Minimax, depth=3, run_time=1)
     minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=MinimaxAlphaBeta, depth=3, run_time=1)
     minimax_static_weight = AI(heuristic=StaticWeight(), algorithm=Minimax, depth=3, run_time=1)
-
+    minimax_alpha_beta_static_weight = AI(heuristic=StaticWeight(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
     # Test the AI by making it play against itself
     # ai_plays_itself(ai=random_ai)
     # ai_plays_itself(ai=greedy_ai)
@@ -100,9 +100,14 @@ def test_sample():
         'W': 0,
         'Tie': 0
     }
+    # greedy_ai_static_weight vs greedy_ai
+    # for i in range(100):
+    #     winner = ai_vs_ai(bot1=greedy_ai_static_weight, bot2=greedy_ai)
+    #     score[winner] += 1
 
-    for i in range(150):
-        winner = ai_vs_ai(bot1=minimax_ai_coin_parity, bot2=minimax_static_weight)
+    # minimax_alpha_beta_static_weight vs greedy_ai
+    for i in range(100):
+        winner = ai_vs_ai(bot1=minimax_alpha_beta_static_weight, bot2=greedy_ai)
         score[winner] += 1
 
     print(score)
