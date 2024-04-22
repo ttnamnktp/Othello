@@ -5,6 +5,8 @@ from ai.heuristics.static_weight import StaticWeight
 from ai.search_algorithms.greedy import Greedy
 from ai.search_algorithms.minimax import Minimax
 from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from ai.search_algorithms.random import Random
+from ai.reinforcement_learning.monte_carlo_search_algorithm import MonteCarloTreeSearch
 from engine.GameState import GameState
 from engine.Move import Move
 
@@ -82,6 +84,13 @@ def test_sample():
     minimax_static_weight = AI(heuristic=StaticWeight(), algorithm=Minimax, depth=3, run_time=1)
     minimax_alpha_beta_static_weight = AI(heuristic=StaticWeight(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
     # Test the AI by making it play against itself
+
+    random_ai = AI(heuristic=None, algorithm=Random, depth=1)
+    greedy_ai = AI(heuristic=CoinParity(), algorithm=Greedy, depth=1)
+    minimax_ai = AI(heuristic=CoinParity(), algorithm=Minimax, depth=3)
+    minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
+    mcts_ai = AI(heuristic= None, algorithm=MonteCarloTreeSearch, depth=5)
+
     # ai_plays_itself(ai=random_ai)
     # ai_plays_itself(ai=greedy_ai)
     # ai_plays_itself(ai=minimax_ai)
@@ -93,6 +102,7 @@ def test_sample():
     # ai_vs_ai(bot1=random_ai, bot2=greedy_ai)
     # ai_vs_ai(bot1=minimax_ai, bot2=greedy_ai)
     # ai_vs_ai(bot1=minimax_ai, bot2=minimax_alpha_beta_ai)
+
     # ai_vs_ai(bot1=minimax_alpha_beta_ai, bot2=greedy_ai)
 
     score = {
@@ -111,3 +121,9 @@ def test_sample():
         score[winner] += 1
 
     print(score)
+
+    ai_vs_ai(bot1=greedy_ai, bot2=mcts_ai)
+
+if __name__ == "__main__":
+    test_sample()
+
