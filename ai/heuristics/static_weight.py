@@ -17,10 +17,13 @@ class StaticWeight(Heuristic, ABC):
     ]
 
     def evaluate(self, game_state: GameState) -> int:
-        cur_player_weight = 0
+        black_weight = 0
+        white_weight = 0
         for i in range(game_state.size):
             for j in range(game_state.size):
-                if game_state.board[i][j] == game_state.current_player:
-                    cur_player_weight += self.STATIC_WEIGHT[i][j]
+                if game_state.board[i][j] == 'B':
+                    black_weight += StaticWeight.STATIC_WEIGHT[i][j]
+                else:
+                    white_weight += StaticWeight.STATIC_WEIGHT[i][j]
 
-        return cur_player_weight
+        return white_weight - black_weight
