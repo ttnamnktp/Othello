@@ -1,6 +1,9 @@
 from engine.GameState import GameState
 from engine.Move import Move
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 def print_state(state):
     for row in state.board:
