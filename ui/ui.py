@@ -140,7 +140,7 @@ class ChessboardScene:
         self.background.fill(pygame.Color("beige"))  # Fill background with beige color
         bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (B_WIDTH, B_HEIGHT))
         # self.background.blit(bg, (-1, 0))
-        self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64, (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
+        self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64 , (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
         self.title = title
         self.gs = gs
 
@@ -226,7 +226,7 @@ class ChessGUI:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN: 
                 if event.button == 1:  # Left mouse button clicked
                     x, y = pygame.mouse.get_pos()
                     row = (y - (HEIGHT - B_HEIGHT) // 2) // SQ_SIZE
