@@ -1,5 +1,6 @@
 import pygame
 from engine.GameState import GameState as gs
+from engine.Move import Move
 
 # WIDTH = 640
 # HEIGHT = 480
@@ -140,7 +141,7 @@ class ChessboardScene:
         self.background.fill(pygame.Color("beige"))  # Fill background with beige color
         bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (B_WIDTH, B_HEIGHT))
         # self.background.blit(bg, (-1, 0))
-        self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64 , (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
+        self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64, (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
         self.title = title
         self.gs = gs
 
@@ -169,14 +170,6 @@ class ChessboardScene:
                 pygame.draw.rect(screen, color, pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
                                                             (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE,
                                                             SQ_SIZE))  # Adjusted position
-
-        # # Draw grid lines
-        # for r in range(DIMENSION + 1):  # Horizontal lines
-        #     # pygame.draw.line(screen, pygame.Color("black"), (0, r * SQ_SIZE), (B_WIDTH, r * SQ_SIZE))
-        #     pygame.draw.line(screen, pygame.Color("black"), ((WIDTH - B_WIDTH) // 2 - 64, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2), ((WIDTH - B_WIDTH) // 2 - 64 + B_WIDTH, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
-        # for c in range(DIMENSION + 1):  # Vertical lines
-        #     pygame.draw.line(screen, pygame.Color("black"), (c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64, (HEIGHT - B_HEIGHT) // 2), (c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64, (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT))  # Adjusted position
-        #     # pygame.draw.line(screen, pygame.Color("black"), (c * SQ_SIZE, 0), (c * SQ_SIZE, HEIGHT))
 
         # Draw grid lines
         for r in range(DIMENSION):  # Horizontal lines
@@ -221,39 +214,68 @@ class ChessGUI:
         self.gs = gs
         self.selected_piece = None
         self.valid_moves = []
+        self.running = True
+
+        # Load images of pieces
+        pieces = ['W', 'B']  # Assuming you have images for white (W) and black (B) pieces
+        for piece in pieces:
+            IMAGES[piece] = pygame.transform.scale(
+                pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE)
+                )
+
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN: 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button clicked
                     x, y = pygame.mouse.get_pos()
                     row = (y - (HEIGHT - B_HEIGHT) // 2) // SQ_SIZE
                     col = (x - ((WIDTH - B_WIDTH) // 2) + 64) // SQ_SIZE
                     if 0 <= row < DIMENSION and 0 <= col < DIMENSION:
-                        piece = self.gs.board[row][col]
-                        if piece == self.gs.current_player:  # If the clicked piece belongs to the current player
-                            self.selected_piece = (row, col)
-                            self.valid_moves = self.gs.get_valid_moves(row, col)
-                            self.highlight_valid_moves()
+                        if self.selected_piece:
+                            move = (row, col)
+                            if move in self.valid_moves:
+                                Move.make_move(self.gs, move)
+                                self.selected_piece = None
+                                self.valid_moves = []
+                            else:
+                                self.selected_piece = None
+                                self.valid_moves = []
+                        else:
+                            piece = self.gs.board[row][col]
+                            if piece == self.gs.current_player:  # If the clicked piece belongs to the current player
+                                self.selected_piece = (row, col)
+                                self.valid_moves = Move.get_valid_moves(self.gs)
 
-    def highlight_valid_moves(self):
+    def highlight_valid_moves(self, screen):
         # Highlight valid moves on the GUI
         for move in self.valid_moves:
             row, col = move
             pygame.draw.rect(screen, pygame.Color("light green"),
                              pygame.Rect((col * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
                                          (row * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))
-
+            
     def draw_board(self, screen):
         # Draw the chessboard and pieces on the screen
-        # Similar to the ChessboardScene draw method, but adapted to use screen as parameter
-        pass
+        colors = [pygame.Color("white"), pygame.Color("gray")]
+        for r in range(DIMENSION):
+            for c in range(DIMENSION):
+                color = colors[(r + c) % 2]
+                pygame.draw.rect(screen, color, pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
+                                                            (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))
+                piece = self.gs.board[r][c]
+
+                if piece != ' ':
+                    screen.blit(IMAGES[piece], pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
+                                                           (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))
+
 
     def run_game(self, screen):
         self.running = True
         while self.running:
             self.handle_events()
             self.draw_board(screen)
+            self.highlight_valid_moves(screen)  # Highlight valid moves
             pygame.display.flip()
