@@ -2,6 +2,11 @@ import pygame
 import time
 from ui.ui import *
 from engine.GameState import GameState
+from ai.ai import AI
+from ai.heuristics.coin_parity import CoinParity
+from ai.search_algorithms.minimax import Minimax
+
+
 
 WIDTH = 832
 HEIGHT = 640
@@ -36,7 +41,6 @@ def main():
     gs = GameState()
     running = True
     scene = scenes['TITLE']
-    chess_gui = ChessGUI(gs)
     game_over_scene = None
 
     while running:  # Main game loop
@@ -61,16 +65,38 @@ def main():
                     if selected_option:
                         if selected_option == 'HUMAN_VS_HUMAN':
                             scene = scenes['GAME_STATE']
+                            chess_gui = ChessGUI(gs)
                             chess_gui.run_game(screen)  # Run the game in ChessGUI
                             scenes['GAME_OVER'] = GameOver(gs)
                             scene = scenes['GAME_OVER']
                             # Set up the game for Human vs Human
                         elif selected_option == 'HUMAN_VS_BOT':
-                            scene = scenes['TITLE']
+                            scene = scenes['GAME_STATE']
+                            human_turn = True  # Set human player's turn                            
+                            # ai_player = AI(CoinParity(), Minimax(), depth=1)
+                            if human_turn:
+                                chess_gui.handle_events()
+                                chess_gui.draw_board(screen)
+                                chess_gui.highlight_valid_moves(screen)  # Highlight valid moves
+                                pygame.display.flip()
+                                human_turn = False
+                                print(" human_turn = False")
+
+                            else:
+                                # Handle AI player's turn
+                                # Use AI logic to determine the best move
+                                best_move = ai_player.return_best_move(gs)
+                                # Make the move and update game state
+                                Move.make_move(gs, best_move)
+                                # Switch turn back to human player
+                                human_turn = True
+
                             # Set up the game for Human vs Bot
                         elif selected_option == 'BOT_VS_BOT':
-                            scene = scenes['TITLE']
                             # Set up the game for Bot vs Bot
+                            scene = scenes['GAME_STATE']
+                            
+                            
 
 
         screen.fill((0, 0, 0))  # Clear the screen

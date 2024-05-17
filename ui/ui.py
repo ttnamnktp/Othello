@@ -243,9 +243,6 @@ class ChessGUI:
                                     print("Game Over")
                                     self.running = False
 
-                                # if self.gs.is_game_over():  # Check if the game is over after each move
-                                #     print("Game Over")
-                                #     self.running = False
                             else:
                                 print("Move is invalid")
                                 self.selected_piece = None
@@ -283,6 +280,45 @@ class ChessGUI:
     def draw_board(self, screen):
         # Call the draw method of ChessboardScene
         self.chessboard_scene.draw(screen)
+
+class ChessHuman(ChessGUI):
+    def human_handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Left mouse button clicked
+                    print("Mouse Clicked")
+                    x, y = pygame.mouse.get_pos()
+                    row = (y - (HEIGHT - B_HEIGHT) // 2) // SQ_SIZE
+                    col = (x - ((WIDTH - B_WIDTH) // 2) + 64) // SQ_SIZE
+                    print(f"Click position: ({x}, {y}), Board position: ({row}, {col})")
+                    if 0 <= row < DIMENSION and 0 <= col < DIMENSION:
+                        if self.selected_piece:
+                            move = (row, col)
+                            print(f"Selected piece at: {self.selected_piece}, Attempt move: {move}")
+                            if move in self.valid_moves:
+                                print("Move is valid")
+                                Move.make_move(self.gs, move)
+                                self.selected_piece = None
+                                self.valid_moves = []
+
+                                if not Move.get_valid_moves(self.gs):  # Check if the other player has valid moves
+                                    print("Game Over")
+                                    self.running = False
+
+                            else:
+                                print("Move is invalid")
+                                self.selected_piece = None
+                                self.valid_moves = []
+                        else:
+                            piece = self.gs.board[row][col]
+                            print(f"Piece selected: {piece} at ({row}, {col})")
+                            if piece == self.gs.current_player:  # If the clicked piece belongs to the current player
+                                self.selected_piece = (row, col)
+                                self.valid_moves = Move.get_valid_moves(self.gs)
+                                print(f"Valid moves: {self.valid_moves}")
+    
 
 
 class GameOver:
