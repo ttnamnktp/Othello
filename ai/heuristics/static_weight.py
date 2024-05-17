@@ -23,7 +23,7 @@ class StaticWeight(Heuristic, ABC):
             for j in range(game_state.size):
                 if game_state.board[i][j] == 'B':
                     black_weight += StaticWeight.STATIC_WEIGHT[i][j]
-                else:
+                elif game_state.board[i][j] == 'W':
                     white_weight += StaticWeight.STATIC_WEIGHT[i][j]
 
         return white_weight - black_weight

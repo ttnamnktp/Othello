@@ -1,10 +1,11 @@
 class Node():
 
-    def __init__(self, game_state, move, parent_node):
+    def __init__(self, game_state, move, parent_node, depth):
         # init associated game state
         self.game_state = game_state
         self.is_terminal = False
         self.move = move
+        self.depth = depth
 
         # check if it is a terminal node
         if self.game_state.is_game_over():
