@@ -17,6 +17,25 @@ NUMBER_DEPTH = 4
 WIDTH_PER_BOX = WIDTH_BOX // NUMBER_DEPTH
 IMAGES = {}
 
+class Button:
+    def __init__(self, image_path, scale_factor, position):
+        image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(
+            image, 
+            (image.get_width() // scale_factor, image.get_height() // scale_factor)
+        )
+        self.rect = self.image.get_rect()
+        self.rect.center = position
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def is_clicked(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            return self.rect.collidepoint(event.pos)
+        return False
+
+
 
 class SimpleScene:
     def __init__(self, text):
@@ -25,18 +44,8 @@ class SimpleScene:
         self.background.blit(bg, (-1, 0))
         self.text = text
 
-        # Define playRect and helpRect attributes
-        play = pygame.transform.scale(pygame.image.load("ui/image/start.png"), (
-            pygame.image.load("ui/image/start.png").get_width() // 6,
-            pygame.image.load("ui/image/start.png").get_height() // 6))
-        self.playRect = play.get_rect()
-        self.playRect.center = (WIDTH // 2, HEIGHT // 2)        
-        
-        help = pygame.transform.scale(pygame.image.load("ui/image/help.png"), (
-            pygame.image.load("ui/image/help.png").get_width() // 9,
-            pygame.image.load("ui/image/help.png").get_height() // 9))
-        self.helpRect = help.get_rect()
-        self.helpRect.center = (WIDTH // 2, HEIGHT // 1.25)
+        self.play_button = Button("ui/image/start.png", 6, (WIDTH // 2, HEIGHT // 2))
+        self.help_button = Button("ui/image/help.png", 9, (WIDTH // 2, HEIGHT // 1.25))
 
 
     def draw(self, screen):
@@ -45,32 +54,18 @@ class SimpleScene:
         text = font.render(self.text, True, pygame.Color(144, 8, 8))
         textRect = text.get_rect()
         textRect.center = (WIDTH // 2, HEIGHT // 5)
-
         screen.blit(text, textRect)
 
-        # Draw play and help images using playRect and helpRect attributes
-        play = pygame.transform.scale(pygame.image.load("ui/image/start.png"), (
-            pygame.image.load("UI/image/start.png").get_width() // 6,
-            pygame.image.load("UI/image/start.png").get_height() // 6))
-        screen.blit(play, self.playRect)
-
-        help = pygame.transform.scale(pygame.image.load("ui/image/help.png"), (
-            pygame.image.load("UI/image/help.png").get_width() // 9,
-            pygame.image.load("UI/image/help.png").get_height() // 9))
-        screen.blit(help, self.helpRect)
+        self.play_button.draw(screen)
+        self.help_button.draw(screen)
 
     def update(self, events):
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.playRect.collidepoint(event.pos):
-                    return ('CHOOSE_MODE')
-                elif self.helpRect.collidepoint(event.pos):
-                    return 'HELP'
+            if self.play_button.is_clicked(event):
+                return 'CHOOSE_MODE'
+            elif self.help_button.is_clicked(event):
+                return 'HELP'
         return None
-
-    # def element(self, events):
-    #     pass
-
 
 class HelpScene:
     def __init__(self, title, *texts):
@@ -79,11 +74,12 @@ class HelpScene:
         self.background.blit(bg, (-1, 0))
         self.texts = texts
         self.title = title
+        self.back_button = Button("ui/image/back.png", 9, (WIDTH // 2, HEIGHT // 1.25))
+
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         n = 1
-
         for text in self.texts:
             font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
             text = font.render(text, True, pygame.Color(144, 8, 8))
@@ -98,6 +94,14 @@ class HelpScene:
         textRect.center = (WIDTH // 2, HEIGHT // 6)
         screen.blit(text, textRect)
 
+        self.back_button.draw(screen)
+
+    def update(self, events):
+        for event in events:
+            if self.back_button.is_clicked(event):
+                return 'TITLE'        
+        return None
+    
 
 class ChooseScene:
     def __init__(self, title, *texts):
@@ -129,7 +133,7 @@ class ChooseScene:
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.playRect.collidepoint(event.pos):
-                    return ('TITLE')
+                    return 'TITLE'
 
     def element(self, events):
         for event in events:
@@ -137,28 +141,23 @@ class ChooseScene:
                 n = 1
                 for rect in self.rects:
                     if rect.collidepoint(event.pos):
-                        if (n == 1):
-                            return (True, True)
-                        if (n == 2):
-                            return (True, False)
-                        if (n == 3):
-                            return (False, False)
+                        if n == 1:
+                            return 'HUMAN_VS_HUMAN'
+                        elif n == 2:
+                            return 'HUMAN_VS_AI'
+                        elif n == 3:
+                            return 'AI_VS_AI'
                     n += 1
-
+        return None
 
 class ChessboardScene:
     def __init__(self, title, gs):
         self.background = pygame.Surface((WIDTH, HEIGHT))
         self.background.fill(pygame.Color("beige"))  # Fill background with beige color
         bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (B_WIDTH, B_HEIGHT))
-        # self.background.blit(bg, (-1, 0))
         self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64, (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
         self.title = title
         self.gs = gs
-
-    """
-    Response for all the graphics within a current game state
-    """
 
     def draw(self, screen):
         # Display the game state on the screen
@@ -167,7 +166,7 @@ class ChessboardScene:
         screen.blit(text, (10, 10))
         board = self.gs.board
 
-        # load images of pieces in the chess board
+        # Load images of pieces in the chessboard
         pieces = ['W', 'B']
         for piece in pieces:
             IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
@@ -177,10 +176,8 @@ class ChessboardScene:
         for r in range(DIMENSION):
             for c in range(DIMENSION):
                 color = colors[((r + c) % 2)]
-                # pygame.draw.rect(screen, color, pygame.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
                 pygame.draw.rect(screen, color, pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
-                                                            (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE,
-                                                            SQ_SIZE))  # Adjusted position
+                                                            (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))  # Adjusted position
 
         # Draw grid lines
         for r in range(DIMENSION):  # Horizontal lines
@@ -189,7 +186,6 @@ class ChessboardScene:
                              (WIDTH - B_WIDTH) // 2 - 64 + B_WIDTH,
                              r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
             # Add row coordinates
-            # row_text = font.render(str(DIMENSION - r), True, pygame.Color("black"))
             row_text = font.render(str(r + 1), True, pygame.Color("black"))
             screen.blit(row_text, ((WIDTH - B_WIDTH) // 2 - 100, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2 + SQ_SIZE // 2))
 
@@ -203,21 +199,14 @@ class ChessboardScene:
             screen.blit(col_text, (
             c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64 + SQ_SIZE // 2, (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT))
 
-        # Draw the each piece of the chessboard
+        # Draw each piece of the chessboard
         for r in range(DIMENSION):
             for c in range(DIMENSION):
                 piece = board[r][c]
-                if piece != " ":  # not empty square
+                if piece in IMAGES:  # Ensure the piece is in IMAGES dictionary
                     screen.blit(IMAGES[piece], pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
                                                            (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE,
                                                            SQ_SIZE))  # Adjusted position
-                    # screen.blit(IMAGES[piece], pygame.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
-
-    def update(self, events):
-        pass
-
-    def element(self, events):
-        pass
 
 
 class ChessGUI:
@@ -301,17 +290,6 @@ class ChessGUI:
     def draw_board(self, screen):
         # Call the draw method of ChessboardScene
         self.chessboard_scene.draw(screen)
-
-    
-        # while self.running:
-        #     self.handle_events()
-        #     self.draw_board(screen)
-        #     self.highlight_valid_moves(screen)  # Highlight valid moves
-        #     pygame.display.flip()
-        #     # print("Van dang chay")
-        #     if self.gs.is_game_over():
-        #         self.running = False  # End the game loop when the game is over
-
 
 
 class GameOver:

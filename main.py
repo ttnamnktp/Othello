@@ -51,7 +51,10 @@ def main():
                         scene = scenes['CHOOSE_MODE']
                     elif result == 'HELP':
                         scene = scenes['HELP']
-                        pass  # Handle help scene
+                elif result == 'HELP':
+                    result = scene.update([event])
+                    if result == 'TITLE':
+                        scene = scenes['TITLE']
                 elif scene == scenes['CHOOSE_MODE']:
                     selected_option = scene.element([event])
                     if selected_option:
