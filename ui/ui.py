@@ -17,6 +17,13 @@ NUMBER_DEPTH = 4
 WIDTH_PER_BOX = WIDTH_BOX // NUMBER_DEPTH
 IMAGES = {}
 
+def load_images():
+        pieces = ['W', 'B']
+        for piece in pieces:
+            IMAGES[piece] = pygame.transform.scale(
+                pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE)
+            )
+
 class Button:
     def __init__(self, image_path, scale_factor, position):
         image = pygame.image.load(image_path)
@@ -159,11 +166,7 @@ class ChessboardScene:
         screen.blit(text, (10, 10))
         board = self.gs.board
 
-        # Load images of pieces in the chessboard
-        pieces = ['W', 'B']
-        for piece in pieces:
-            IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
-
+        load_images()
         # Draw the chessboard
         colors = [pygame.Color("dark green"), pygame.Color("dark green")]
         for r in range(DIMENSION):
@@ -208,13 +211,8 @@ class ChessGUI:
         self.selected_piece = None
         self.valid_moves = []
         self.running = True
+        load_images()    
 
-        # Load images of pieces
-        pieces = ['W', 'B']  # Assuming you have images for white (W) and black (B) pieces
-        for piece in pieces:
-            IMAGES[piece] = pygame.transform.scale(
-                pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE)
-            )
         # Create a ChessboardScene instance
         self.chessboard_scene = ChessboardScene("Chessboard", gs)
 
@@ -224,36 +222,39 @@ class ChessGUI:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button clicked
-                    print("Mouse Clicked")
-                    x, y = pygame.mouse.get_pos()
-                    row = (y - (HEIGHT - B_HEIGHT) // 2) // SQ_SIZE
-                    col = (x - ((WIDTH - B_WIDTH) // 2) + 64) // SQ_SIZE
-                    print(f"Click position: ({x}, {y}), Board position: ({row}, {col})")
-                    if 0 <= row < DIMENSION and 0 <= col < DIMENSION:
-                        if self.selected_piece:
-                            move = (row, col)
-                            print(f"Selected piece at: {self.selected_piece}, Attempt move: {move}")
-                            if move in self.valid_moves:
-                                print("Move is valid")
-                                Move.make_move(self.gs, move)
-                                self.selected_piece = None
-                                self.valid_moves = []
+                    self.handle_mouse_click()
 
-                                if not Move.get_valid_moves(self.gs):  # Check if the other player has valid moves
-                                    print("Game Over")
-                                    self.running = False
+    def handle_mouse_click(self):
+        x, y = pygame.mouse.get_pos()
+        row = (y - (HEIGHT - B_HEIGHT) // 2) // SQ_SIZE
+        col = (x - ((WIDTH - B_WIDTH) // 2) + 64) // SQ_SIZE
 
-                            else:
-                                print("Move is invalid")
-                                self.selected_piece = None
-                                self.valid_moves = []
-                        else:
-                            piece = self.gs.board[row][col]
-                            print(f"Piece selected: {piece} at ({row}, {col})")
-                            if piece == self.gs.current_player:  # If the clicked piece belongs to the current player
-                                self.selected_piece = (row, col)
-                                self.valid_moves = Move.get_valid_moves(self.gs)
-                                print(f"Valid moves: {self.valid_moves}")
+        if 0 <= row < DIMENSION and 0 <= col < DIMENSION:
+            if self.selected_piece:
+                move = (row, col)
+                if move in self.valid_moves:
+                    self.make_move(move)
+                    if not Move.get_valid_moves(self.gs):  # Check if the other player has valid moves
+                        print("Game Over")
+                        self.running = False
+                else:
+                    print("Move is invalid")
+                self.selected_piece = None
+                self.valid_moves = []
+            else:
+                self.select_piece(row, col)
+
+    def select_piece(self, row, col):
+        piece = self.gs.board[row][col]
+        if piece == self.gs.current_player:
+            self.selected_piece = (row, col)
+            self.valid_moves = Move.get_valid_moves(self.gs)
+            print(f"Valid moves: {self.valid_moves}")
+
+    def make_move(self, move):
+        Move.make_move(self.gs, move)
+        self.selected_piece = None
+        self.valid_moves = []
 
 
     def run_game(self, screen):
@@ -263,14 +264,12 @@ class ChessGUI:
             self.draw_board(screen)
             self.highlight_valid_moves(screen)  # Highlight valid moves
             pygame.display.flip()
-            # print("Running game loop")
             if self.gs.is_game_over():
                 print("Game over")
                 self.running = False  # End the game loop when the game is over
 
 
     def highlight_valid_moves(self, screen):
-        # Highlight valid moves on the GUI
         for move in self.valid_moves:
             row, col = move
             pygame.draw.rect(screen, pygame.Color("light green"),
