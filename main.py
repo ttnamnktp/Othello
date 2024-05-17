@@ -55,13 +55,22 @@ def main():
                     result = scene.update([event])
                     if result == 'TITLE':
                         scene = scenes['TITLE']
+                # Inside the main loop, after handling mouse events in the ChooseScene
                 elif scene == scenes['CHOOSE_MODE']:
-                    selected_option = scene.element([event])
+                    selected_option = scene.update([event])
                     if selected_option:
-                        scene = scenes['GAME_STATE']
-                        chess_gui.run_game(screen)  # Run the game in ChessGUI
-                        scenes['GAME_OVER'] = GameOver(gs)
-                        scene = scenes['GAME_OVER']
+                        if selected_option == 'HUMAN_VS_HUMAN':
+                            scene = scenes['GAME_STATE']
+                            chess_gui.run_game(screen)  # Run the game in ChessGUI
+                            scenes['GAME_OVER'] = GameOver(gs)
+                            scene = scenes['GAME_OVER']
+                            # Set up the game for Human vs Human
+                        elif selected_option == 'HUMAN_VS_BOT':
+                            scene = scenes['TITLE']
+                            # Set up the game for Human vs Bot
+                        elif selected_option == 'BOT_VS_BOT':
+                            scene = scenes['TITLE']
+                            # Set up the game for Bot vs Bot
 
 
         screen.fill((0, 0, 0))  # Clear the screen

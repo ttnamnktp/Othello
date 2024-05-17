@@ -132,23 +132,16 @@ class ChooseScene:
     def update(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.playRect.collidepoint(event.pos):
-                    return 'TITLE'
-
-    def element(self, events):
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                n = 1
-                for rect in self.rects:
+                for i, rect in enumerate(self.rects):
                     if rect.collidepoint(event.pos):
-                        if n == 1:
+                        if i == 0:  # Human vs Human
                             return 'HUMAN_VS_HUMAN'
-                        elif n == 2:
-                            return 'HUMAN_VS_AI'
-                        elif n == 3:
-                            return 'AI_VS_AI'
-                    n += 1
+                        elif i == 1:  # Human vs Bot
+                            return 'HUMAN_VS_BOT'
+                        elif i == 2:  # Bot vs Bot
+                            return 'BOT_VS_BOT'
         return None
+
 
 class ChessboardScene:
     def __init__(self, title, gs):
