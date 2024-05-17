@@ -25,27 +25,38 @@ class SimpleScene:
         self.background.blit(bg, (-1, 0))
         self.text = text
 
+        # Define playRect and helpRect attributes
+        play = pygame.transform.scale(pygame.image.load("ui/image/start.png"), (
+            pygame.image.load("ui/image/start.png").get_width() // 6,
+            pygame.image.load("ui/image/start.png").get_height() // 6))
+        self.playRect = play.get_rect()
+        self.playRect.center = (WIDTH // 2, HEIGHT // 2)        
+        
+        help = pygame.transform.scale(pygame.image.load("ui/image/help.png"), (
+            pygame.image.load("ui/image/help.png").get_width() // 9,
+            pygame.image.load("ui/image/help.png").get_height() // 9))
+        self.helpRect = help.get_rect()
+        self.helpRect.center = (WIDTH // 2, HEIGHT // 1.25)
+
+
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 80)
         text = font.render(self.text, True, pygame.Color(144, 8, 8))
         textRect = text.get_rect()
-        # textRect.center = (WIDTH // 2, HEIGHT // 3)
         textRect.center = (WIDTH // 2, HEIGHT // 5)
 
         screen.blit(text, textRect)
+
+        # Draw play and help images using playRect and helpRect attributes
         play = pygame.transform.scale(pygame.image.load("ui/image/start.png"), (
             pygame.image.load("UI/image/start.png").get_width() // 6,
             pygame.image.load("UI/image/start.png").get_height() // 6))
-        self.playRect = play.get_rect()
-        self.playRect.center = (WIDTH // 2, HEIGHT // 2)
         screen.blit(play, self.playRect)
 
         help = pygame.transform.scale(pygame.image.load("ui/image/help.png"), (
             pygame.image.load("UI/image/help.png").get_width() // 9,
             pygame.image.load("UI/image/help.png").get_height() // 9))
-        self.helpRect = help.get_rect()
-        self.helpRect.center = (WIDTH // 2, HEIGHT // 1.25)
         screen.blit(help, self.helpRect)
 
     def update(self, events):
@@ -57,8 +68,8 @@ class SimpleScene:
                     return 'HELP'
         return None
 
-    def element(self, events):
-        pass
+    # def element(self, events):
+    #     pass
 
 
 class HelpScene:
@@ -221,8 +232,9 @@ class ChessGUI:
         for piece in pieces:
             IMAGES[piece] = pygame.transform.scale(
                 pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE)
-                )
-
+            )
+        # Create a ChessboardScene instance
+        self.chessboard_scene = ChessboardScene("Chessboard", gs)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -230,24 +242,53 @@ class ChessGUI:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button clicked
+                    print("Mouse Clicked")
                     x, y = pygame.mouse.get_pos()
                     row = (y - (HEIGHT - B_HEIGHT) // 2) // SQ_SIZE
                     col = (x - ((WIDTH - B_WIDTH) // 2) + 64) // SQ_SIZE
+                    print(f"Click position: ({x}, {y}), Board position: ({row}, {col})")
                     if 0 <= row < DIMENSION and 0 <= col < DIMENSION:
                         if self.selected_piece:
                             move = (row, col)
+                            print(f"Selected piece at: {self.selected_piece}, Attempt move: {move}")
                             if move in self.valid_moves:
+                                print("Move is valid")
                                 Move.make_move(self.gs, move)
                                 self.selected_piece = None
                                 self.valid_moves = []
+
+                                if not Move.get_valid_moves(self.gs):  # Check if the other player has valid moves
+                                    print("Game Over")
+                                    self.running = False
+
+                                # if self.gs.is_game_over():  # Check if the game is over after each move
+                                #     print("Game Over")
+                                #     self.running = False
                             else:
+                                print("Move is invalid")
                                 self.selected_piece = None
                                 self.valid_moves = []
                         else:
                             piece = self.gs.board[row][col]
+                            print(f"Piece selected: {piece} at ({row}, {col})")
                             if piece == self.gs.current_player:  # If the clicked piece belongs to the current player
                                 self.selected_piece = (row, col)
                                 self.valid_moves = Move.get_valid_moves(self.gs)
+                                print(f"Valid moves: {self.valid_moves}")
+
+
+    def run_game(self, screen):
+        self.running = True        
+        while self.running:
+            self.handle_events()
+            self.draw_board(screen)
+            self.highlight_valid_moves(screen)  # Highlight valid moves
+            pygame.display.flip()
+            # print("Running game loop")
+            if self.gs.is_game_over():
+                print("Game over")
+                self.running = False  # End the game loop when the game is over
+
 
     def highlight_valid_moves(self, screen):
         # Highlight valid moves on the GUI
@@ -258,24 +299,32 @@ class ChessGUI:
                                          (row * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))
             
     def draw_board(self, screen):
-        # Draw the chessboard and pieces on the screen
-        colors = [pygame.Color("white"), pygame.Color("gray")]
-        for r in range(DIMENSION):
-            for c in range(DIMENSION):
-                color = colors[(r + c) % 2]
-                pygame.draw.rect(screen, color, pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
-                                                            (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))
-                piece = self.gs.board[r][c]
+        # Call the draw method of ChessboardScene
+        self.chessboard_scene.draw(screen)
 
-                if piece != ' ':
-                    screen.blit(IMAGES[piece], pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
-                                                           (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE, SQ_SIZE))
+    
+        # while self.running:
+        #     self.handle_events()
+        #     self.draw_board(screen)
+        #     self.highlight_valid_moves(screen)  # Highlight valid moves
+        #     pygame.display.flip()
+        #     # print("Van dang chay")
+        #     if self.gs.is_game_over():
+        #         self.running = False  # End the game loop when the game is over
 
 
-    def run_game(self, screen):
-        self.running = True
-        while self.running:
-            self.handle_events()
-            self.draw_board(screen)
-            self.highlight_valid_moves(screen)  # Highlight valid moves
-            pygame.display.flip()
+
+class GameOver:
+    def __init__(self, game_state):
+        self.game_state = game_state
+
+    def draw(self, screen):
+        winner = self.game_state.get_winner()
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 36)
+        winner = self.game_state.get_winner()
+        if winner != 'Tie':
+            text = font.render("Game over. Winner: " + winner, True, (255, 255, 255))
+        else:
+            text = font.render("Game over. It's a Tie!", True, (255, 255, 255))
+        screen.blit(text, (10, 10))
