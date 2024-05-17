@@ -8,7 +8,7 @@ from engine.GameState import Move
 import math
 import random
 
-DEPTH = 5
+DEPTH = 15
 
 weight_matrix = [
     [400, -80, 76, 44, 44, 76, -80, 400],
@@ -33,13 +33,13 @@ class MonteCarloTreeSearch(SearchAlgorithm):
         self.root = Node(game_state, None,None, 0)
 
         # walk through 1000 iterations
-        for iteration in range(2000):
-            # print(0)
+        for iteration in range(100):
+            print(0)
             # select a node (selection phase)
             node = self.select(self.root)
 
             # scrore current node (simulation phase)
-            score = self.rollout(node.game_state)
+            score = self.simulation(node.game_state)
 
             # backpropagate results
             self.backpropagate(node, score)
@@ -56,8 +56,8 @@ class MonteCarloTreeSearch(SearchAlgorithm):
     def select(self, node):
         # make sure that we're dealing with non-terminal nodes
 
-        while not node.is_terminal and node.depth < DEPTH:
-            # print(1)
+        while (not node.is_terminal) and node.depth < DEPTH:
+            print(1)
             # case where the node is fully expanded
             if node.is_fully_expanded:
                 node = self.get_best_move(node, 2)
@@ -77,7 +77,7 @@ class MonteCarloTreeSearch(SearchAlgorithm):
 
         # loop over generated states (moves)
         for state in states:
-            # print(2)
+            print(2)
             # make sure that current state (move) is not present in child nodes
             if str(state[0].board) not in node.children_node:
                 # create a new node
@@ -97,12 +97,14 @@ class MonteCarloTreeSearch(SearchAlgorithm):
         # print('Should not get here!!!')
 
     # simulate the game via making random moves until reach end of the game
-    def rollout(self, game_state):
+    def simulation(self, game_state):
         # make random moves for both sides until terminal state of the game is reached
         depth_it = 0
-        while not game_state.is_game_over() and depth_it < 5:
+        while not game_state.is_game_over() and depth_it < int(DEPTH/4):
+        # while not game_state.is_game_over():
+
             depth_it = depth_it + 1
-            # print(3)
+            print(3)
             # try to make a move
             try:
                 # make the on board
@@ -111,10 +113,10 @@ class MonteCarloTreeSearch(SearchAlgorithm):
             # no moves available
             except:
                 # return a game_state score
-                return self.evaluate(game_state)
+                return self.heuristic.evaluate(game_state)
 
         # return score from the player "W" perspective
-        return self.evaluate(game_state)
+        return self.heuristic.evaluate(game_state)
 
     # backpropagate the number of visits and score up to the root node
     def backpropagate(self, node, score):
@@ -161,18 +163,18 @@ class MonteCarloTreeSearch(SearchAlgorithm):
         # return one of the best moves randomly
         return random.choice(best_moves)
 
-    def evaluate(self, game_state: GameState()) -> int:
-        score = 0
-        current_player = 1
-        if game_state.current_player == 'B':
-            current_player = -1
-        for i in range(8):
-            for j in range(8):
-                k = 0
-                if game_state.board[i][j] == 'W':
-                    k = 1
-                elif game_state.board[i][j] == 'B':
-                    k = -1
-                score += weight_matrix[i][j] * k
-        # return score +  100 * (game_state.white_count - game_state.black_count) / (game_state.white_count + game_state.black_count)
-        return (score + (game_state.white_count - game_state.black_count)) * current_player
+    # def evaluate(self, game_state: GameState()) -> int:
+    #     score = 0
+    #     current_player = 1
+    #     if game_state.current_player == 'B':
+    #         current_player = -1
+    #     for i in range(8):
+    #         for j in range(8):
+    #             k = 0
+    #             if game_state.board[i][j] == 'W':
+    #                 k = 1
+    #             elif game_state.board[i][j] == 'B':
+    #                 k = -1
+    #             score += weight_matrix[i][j] * k
+    #     # return score +  100 * (game_state.white_count - game_state.black_count) / (game_state.white_count + game_state.black_count)
+    #     return (score + (game_state.white_count - game_state.black_count)) * current_player

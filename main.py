@@ -2,6 +2,19 @@ import pygame
 import random
 import copy
 
+from ai.ai import AI
+from ai.heuristics.coin_parity import CoinParity
+from ai.heuristics.static_weight import StaticWeight
+
+from ai.search_algorithms.greedy import Greedy
+from ai.search_algorithms.minimax import Minimax
+from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from ai.search_algorithms.random import Random
+from ai.reinforcement_learning.monte_carlo_search_algorithm import MonteCarloTreeSearch
+from engine.GameState import GameState
+from engine.Move import Move
+
+
 #  utility functions
 def directions(x, y, minX=0, minY=0, maxX=7, maxY=7):
     """Check to determine which directions are valid from current cell"""
@@ -123,7 +136,6 @@ class Othello:
         if not self.grid.findAvailMoves(self.grid.gridLogic, self.currentPlayer):
             self.gameOver = True
             return
-
 
     def draw(self):
         self.screen.fill((0, 0, 0))
