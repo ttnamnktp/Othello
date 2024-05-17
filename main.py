@@ -4,14 +4,8 @@ from ui.ui import *
 from engine.GameState import GameState
 
 WIDTH = 832
-# HEIGHT = 512
 HEIGHT = 640
 
-# C_DIMENSION = 9
-# R_DIMENSION = 11
-# SQ_SIZE = 64
-# MAX_FPS = 10
-# IMAGES = {}
 B_WIDTH = B_HEIGHT = 512  # board_width and board_height
 DIMENSION = 8
 SQ_SIZE = B_HEIGHT // DIMENSION  # square_size
@@ -66,33 +60,10 @@ def main():
                         scenes['GAME_OVER'] = GameOver(gs)
                         scene = scenes['GAME_OVER']
 
-                        # if chess_gui.gs.is_game_over():
-                        #     scenes['GAME_OVER'] = GameOver(gs)
-                        #     scene = scenes['GAME_OVER']
-                        #     break
-                      
-
 
         screen.fill((0, 0, 0))  # Clear the screen
         scene.draw(screen)
 
-        
-        # # Test Success
-        # if not gs.is_game_over() and scenes['GAME_OVER'] is None:
-        #     # Simulate the game being over
-        #     gs.black_count = 31
-        #     gs.white_count = 32
-        #     gs.black_pass = True
-        #     gs.white_pass = True
-        # elif scenes['GAME_OVER'] is None:
-        #     scenes['GAME_OVER'] = GameOver(gs)
-        #     game_over_scene = scenes['GAME_OVER']
-        #     print(gs.black_count)
-
-        # if game_over_scene:
-        #     game_over_scene.draw(screen)
-
-        
 
         pygame.display.flip()  # Update the display
         clock.tick(MAX_FPS)
