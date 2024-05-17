@@ -1,7 +1,7 @@
 import pygame
 from engine.GameState import GameState as gs
 from engine.Move import Move
-from .scenes import Button, SimpleScene, HelpScene, ChooseScene
+from .scenes import Button, SimpleScene, HelpScene, ChooseScene, ChooseBot
 
 # WIDTH = 640
 # HEIGHT = 480

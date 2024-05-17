@@ -5,6 +5,9 @@ from engine.GameState import GameState
 from ai.ai import AI
 from ai.heuristics.coin_parity import CoinParity
 from ai.search_algorithms.minimax import Minimax
+from ai.search_algorithms.random import Random
+from ui.test_ai import ai_vs_ai, test_sample
+
 
 
 
@@ -20,11 +23,12 @@ IMAGES = {}
 scenes = {
     'TITLE': SimpleScene('Cờ lật'),
     'CHOOSE_MODE': ChooseScene('Chọn chế độ chơi', 'Người Vs Người', 'Người Vs Máy', 'Máy Vs Máy'),
-    # 'CHOOSE_BOT': ChooseBot('Chọn Bot', 'Negamax', 'Negascout', 'Minimax', 'Greedy'),
+    'CHOOSE_BOT': ChooseBot('Chọn Bot', 'Negamax', 'Negascout', 'Minimax', 'Greedy'),
     'HELP': HelpScene('Help', 'Your help text here.'),
     'GAME_STATE': ChessboardScene('Cờ lật', GameState()),
     'GAME_OVER': None
 }
+
 
 
 def load_images():
@@ -73,7 +77,7 @@ def main():
                         elif selected_option == 'HUMAN_VS_BOT':
                             scene = scenes['GAME_STATE']
                             human_turn = True  # Set human player's turn                            
-                            # ai_player = AI(CoinParity(), Minimax(), depth=1)
+                            ai_player = AI(CoinParity(), Random(), depth=1)
                             if human_turn:
                                 chess_gui.handle_events()
                                 chess_gui.draw_board(screen)
@@ -94,7 +98,12 @@ def main():
                             # Set up the game for Human vs Bot
                         elif selected_option == 'BOT_VS_BOT':
                             # Set up the game for Bot vs Bot
+                            # scene = scenes['GAME_STATE']
                             scene = scenes['GAME_STATE']
+                            test_sample() 
+                            scenes['GAME_OVER'] = GameOver(gs)
+                            scene = scenes['GAME_OVER']                          
+
                             
                             
 

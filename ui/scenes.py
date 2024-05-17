@@ -142,3 +142,21 @@ class ChooseScene:
                         elif i == 2:  # Bot vs Bot
                             return 'BOT_VS_BOT'
         return None
+
+class ChooseBot (ChooseScene):
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i, rect in enumerate(self.rects):
+                    if rect.collidepoint(event.pos):
+                        if i == 0:  # Human vs Human
+                            return 'BOT 1'
+                        elif i == 1:  # Human vs Bot
+                            return 'BOT 2'
+                        elif i == 2:  # Bot vs Bot
+                            return 'BOT 3'
+                        else:
+                            return 'BOT 4'
+
+        return None
+    
