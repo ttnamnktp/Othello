@@ -51,7 +51,7 @@ class SimpleScene:
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
-        font = pygame.font.Font('UI/font/iCielBCDDCHardwareRough-Compressed.ttf', 80)
+        font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 80)
         text = font.render(self.text, True, pygame.Color(144, 8, 8))
         textRect = text.get_rect()
         textRect.center = (WIDTH // 2, HEIGHT // 5)
@@ -107,7 +107,7 @@ class HelpScene:
 class ChooseScene:
     def __init__(self, title, *texts):
         self.background = pygame.Surface((WIDTH, HEIGHT))
-        bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (WIDTH, HEIGHT))
+        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (WIDTH, HEIGHT))
         self.background.blit(bg, (-1, 0))
         self.rects = []
         self.texts = texts
