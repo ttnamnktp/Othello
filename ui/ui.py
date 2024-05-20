@@ -44,7 +44,7 @@ class ChessboardScene:
     def __init__(self, title, gs):
         self.background = pygame.Surface((WIDTH, HEIGHT))
         self.background.fill(pygame.Color("beige"))  # Fill background with beige color
-        bg = pygame.transform.scale(pygame.image.load("UI/image/bg.png"), (B_WIDTH, B_HEIGHT))
+        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (B_WIDTH, B_HEIGHT))
         self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64, (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
         self.title = title
         self.gs = gs
