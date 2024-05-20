@@ -32,7 +32,7 @@ scenes = {
 def load_images():
     pieces = ['W', 'B']
     for piece in pieces:
-        IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
+        IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + str(piece).lower() + ".png"), (SQ_SIZE, SQ_SIZE))
 
 def main():
     pygame.init()
