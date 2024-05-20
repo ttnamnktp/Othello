@@ -9,8 +9,6 @@ from ai.search_algorithms.random import Random
 from ui.test_ai import ai_vs_ai, test_sample
 
 
-
-
 WIDTH = 832
 HEIGHT = 640
 
@@ -98,9 +96,11 @@ def main():
                             # Set up the game for Human vs Bot
                         elif selected_option == 'BOT_VS_BOT':
                             # Set up the game for Bot vs Bot
-                            # scene = scenes['GAME_STATE']
-                            scene = scenes['GAME_STATE']
-                            test_sample() 
+                            scene = scenes['GAME_STATE'] # Ensure the game state scene is drawn
+                            bot1 = AI(heuristic=None, algorithm=Minimax, depth=1, run_time=0.5)  # Adjust heuristic and depth
+                            bot2 = AI(heuristic=None, algorithm=Minimax, depth=1, run_time=0.5)  # Adjust heuristic and depth
+                            chess_bot = ChessBot(gs)
+                            chess_bot.test_sample()
                             scenes['GAME_OVER'] = GameOver(gs)
                             scene = scenes['GAME_OVER']                          
 

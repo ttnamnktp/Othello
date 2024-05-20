@@ -3,6 +3,21 @@ from engine.GameState import GameState as gs
 from engine.Move import Move
 from .scenes import Button, SimpleScene, HelpScene, ChooseScene, ChooseBot
 
+from ai.ai import AI
+from ai.heuristics.coin_parity import CoinParity
+from ai.heuristics.static_weight import StaticWeight
+from ai.heuristics.hybrid_heuristic import HybridHeuristic
+from ai.heuristics.hybrid_heuristic import DynamicHybridHeuristic
+from ai.heuristics.dynamic_weight import DynamicWeight
+
+from ai.search_algorithms.greedy import Greedy
+from ai.search_algorithms.minimax import Minimax
+from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from ai.search_algorithms.random import Random
+from ai.reinforcement_learning.monte_carlo_search_algorithm import MonteCarloTreeSearch
+from engine.GameState import GameState
+from engine.Move import Move
+
 # WIDTH = 640
 # HEIGHT = 480
 WIDTH = 832
@@ -155,6 +170,7 @@ class ChessGUI:
         # Call the draw method of ChessboardScene
         self.chessboard_scene.draw(screen)
 
+        
 class ChessHuman(ChessGUI):
     def human_handle_events(self):
         for event in pygame.event.get():
@@ -192,8 +208,59 @@ class ChessHuman(ChessGUI):
                                 self.selected_piece = (row, col)
                                 self.valid_moves = Move.get_valid_moves(self.gs)
                                 print(f"Valid moves: {self.valid_moves}")
-    
 
+class ChessBot(ChessGUI):
+    def ai_vs_ai(self, bot1: AI, bot2: AI, screen, gs):
+        chessboard_scene = ChessboardScene("Cờ Lật", gs)
+        print("Initial State")
+        current_player = bot1
+        print("Bot1: Black, Bot2: White")
+                
+        while not gs.is_game_over():
+            # Draw the current game state
+            chessboard_scene.draw(screen)
+            pygame.display.flip()
+            
+            # Handle Pygame events to keep the window responsive
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+            
+            valid_moves = Move.check_valid_moves_and_set_pass(gs)
+            if not valid_moves:
+                current_player = bot2 if current_player == bot1 else bot1
+                continue
+            
+            best_move = current_player.return_best_move(gs)
+            if current_player == bot1:
+                print("Bot1:")
+            else:
+                print("Bot2:")
+            
+            # print_current_move(gs, best_move)
+            Move.make_move(gs, best_move)
+            current_player = bot2 if current_player == bot1 else bot1
+            
+            # Small delay to visually observe the moves
+            pygame.time.wait(500)  # Wait for 500 milliseconds
+
+        print("Game Over")
+        print("Winner:", gs.get_winner())
+        return gs.black_count, gs.white_count
+    
+    def test_sample(self):
+        heuristic1 = CoinParity()
+        algorithm1 = MinimaxAlphaBeta()
+        bot1 = AI(heuristic=heuristic1, algorithm=algorithm1, depth=4, run_time=1)
+        
+        heuristic2 = StaticWeight()
+        algorithm2 = MinimaxAlphaBeta()
+        bot2 = AI(heuristic=heuristic2, algorithm=algorithm2, depth=4, run_time=1)
+
+        screen = pygame.display.set_mode((800, 600))
+        chess_bot = ChessBot()  # Create an instance of ChessBot
+        return chess_bot.ai_vs_ai(bot1=bot1, bot2=bot2, screen=screen, gs=gs)
 
 class GameOver:
     def __init__(self, game_state):
