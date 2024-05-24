@@ -1,13 +1,13 @@
-import pygame
-import time
-from ui.ui import *
-from engine.GameState import GameState
 from ai.ai import AI
 from ai.heuristics.coin_parity import CoinParity
+from ai.heuristics.dynamic_weight import DynamicWeight
+from ai.heuristics.static_weight import StaticWeight
+from ai.search_algorithms.greedy import Greedy
 from ai.search_algorithms.minimax import Minimax
-from ai.search_algorithms.random import Random
-from ui.test_ai import ai_vs_ai, test_sample
-
+from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from engine.GameState import GameState
+from ui.scenes import *
+from ui.ui import *
 
 WIDTH = 832
 HEIGHT = 640
@@ -21,18 +21,25 @@ IMAGES = {}
 scenes = {
     'TITLE': SimpleScene('Cờ lật'),
     'CHOOSE_MODE': ChooseScene('Chọn chế độ chơi', 'Người Vs Người', 'Người Vs Máy', 'Máy Vs Máy'),
-    'CHOOSE_BOT': ChooseBot('Chọn Bot', 'Negamax', 'Negascout', 'Minimax', 'Greedy'),
+    'CHOOSE_BOT': ChooseBot('Chọn do kho', 'EASY', 'MEDIUM', 'HARD'),
     'HELP': HelpScene('Help', 'Your help text here.'),
     'GAME_STATE': ChessboardScene('Cờ lật', GameState()),
     'GAME_OVER': None
 }
 
+bots = {
+    'EASY': AI(heuristic=CoinParity(), algorithm=Greedy, depth=1),
+    'MEDIUM': AI(heuristic=StaticWeight(), algorithm=Minimax, depth=3),
+    'HARD': AI(heuristic=DynamicWeight(), algorithm=MinimaxAlphaBeta, depth=5)
+}
 
 
 def load_images():
     pieces = ['W', 'B']
     for piece in pieces:
-        IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + str(piece).lower() + ".png"), (SQ_SIZE, SQ_SIZE))
+        IMAGES[piece] = pygame.transform.scale(pygame.image.load("ui/image/" + str(piece).lower() + ".png"),
+                                               (SQ_SIZE, SQ_SIZE))
+
 
 def main():
     pygame.init()
@@ -44,6 +51,11 @@ def main():
     running = True
     scene = scenes['TITLE']
     game_over_scene = None
+    chess_gui = ChessGUI(gs)
+
+    chess_bot = None
+    bot = None
+    human_vs_bot_mode = False
 
     while running:  # Main game loop
         for event in pygame.event.get():
@@ -67,56 +79,39 @@ def main():
                     if selected_option:
                         if selected_option == 'HUMAN_VS_HUMAN':
                             scene = scenes['GAME_STATE']
-                            chess_gui = ChessGUI(gs)
                             chess_gui.run_game(screen)  # Run the game in ChessGUI
                             scenes['GAME_OVER'] = GameOver(gs)
                             scene = scenes['GAME_OVER']
                             # Set up the game for Human vs Human
                         elif selected_option == 'HUMAN_VS_BOT':
-                            scene = scenes['GAME_STATE']
-                            human_turn = True  # Set human player's turn                            
-                            ai_player = AI(CoinParity(), Random(), depth=1)
-                            if human_turn:
-                                chess_gui.handle_events()
-                                chess_gui.draw_board(screen)
-                                chess_gui.highlight_valid_moves(screen)  # Highlight valid moves
-                                pygame.display.flip()
-                                human_turn = False
-                                print(" human_turn = False")
+                            # TODO: Display the ChooseBot scene
+                            #  User can choose between 3 difficulties: Easy, Medium, and Hard
+                            #  Each difficulty is a different AI.
+                            #  There will also be a custom difficulty option where the user can choose
+                            #  the algorithm, heuristic and depth of the bot. There will also be a back button to
+                            #  return to the ChooseScene
+                            scene = scenes['CHOOSE_BOT']
+                elif scene == scenes['CHOOSE_BOT']:
+                    selected_option = scene.update([event])
+                    if selected_option:
+                        bot = bots[selected_option]
+                        chess_bot = ChessBot(gs, bot)
+                        scene = scenes['GAME_STATE']
+                        human_vs_bot_mode = True
 
-                            else:
-                                # Handle AI player's turn
-                                # Use AI logic to determine the best move
-                                best_move = ai_player.return_best_move(gs)
-                                # Make the move and update game state
-                                Move.make_move(gs, best_move)
-                                # Switch turn back to human player
-                                human_turn = True
-
-                            # Set up the game for Human vs Bot
-                        elif selected_option == 'BOT_VS_BOT':
-                            # Set up the game for Bot vs Bot
-                            scene = scenes['GAME_STATE'] # Ensure the game state scene is drawn
-                            bot1 = AI(heuristic=None, algorithm=Minimax, depth=1, run_time=0.5)  # Adjust heuristic and depth
-                            bot2 = AI(heuristic=None, algorithm=Minimax, depth=1, run_time=0.5)  # Adjust heuristic and depth
-                            chess_bot = ChessBot(gs)
-                            chess_bot.test_sample()
-                            scenes['GAME_OVER'] = GameOver(gs)
-                            scene = scenes['GAME_OVER']                          
-
-                            
-                            
-
+        if human_vs_bot_mode and scene == scenes['GAME_STATE']:
+            chess_bot.run_game(screen)  # Run the game in ChessBot
+            scenes['GAME_OVER'] = GameOver(gs)
+            scene = scenes['GAME_OVER']
 
         screen.fill((0, 0, 0))  # Clear the screen
         scene.draw(screen)
 
-
         pygame.display.flip()  # Update the display
         clock.tick(MAX_FPS)
 
-    
     pygame.quit()  # Quit pygame when the loop ends
+
 
 if __name__ == "__main__":
     main()

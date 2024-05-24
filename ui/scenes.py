@@ -1,6 +1,4 @@
 import pygame
-from engine.GameState import GameState as gs
-from engine.Move import Move
 
 # WIDTH = 640
 # HEIGHT = 480
@@ -18,11 +16,19 @@ WIDTH_PER_BOX = WIDTH_BOX // NUMBER_DEPTH
 IMAGES = {}
 
 
+def load_images():
+    pieces = ['W', 'B']
+    for piece in pieces:
+        IMAGES[piece] = pygame.transform.scale(
+            pygame.image.load("ui/image/" + str(piece).lower() + ".png"), (SQ_SIZE, SQ_SIZE)
+        )
+
+
 class Button:
     def __init__(self, image_path, scale_factor, position):
         image = pygame.image.load(image_path)
         self.image = pygame.transform.scale(
-            image, 
+            image,
             (image.get_width() // scale_factor, image.get_height() // scale_factor)
         )
         self.rect = self.image.get_rect()
@@ -37,7 +43,6 @@ class Button:
         return False
 
 
-
 class SimpleScene:
     def __init__(self, text):
         self.background = pygame.Surface((WIDTH, HEIGHT))
@@ -47,7 +52,6 @@ class SimpleScene:
 
         self.play_button = Button("ui/image/start.png", 6, (WIDTH // 2, HEIGHT // 2))
         self.help_button = Button("ui/image/help.png", 9, (WIDTH // 2, HEIGHT // 1.25))
-
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
@@ -68,6 +72,7 @@ class SimpleScene:
                 return 'HELP'
         return None
 
+
 class HelpScene:
     def __init__(self, title, *texts):
         self.background = pygame.Surface((WIDTH, HEIGHT))
@@ -76,7 +81,6 @@ class HelpScene:
         self.texts = texts
         self.title = title
         self.back_button = Button("ui/image/back.png", 9, (WIDTH // 2, HEIGHT // 1.25))
-
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
@@ -100,9 +104,9 @@ class HelpScene:
     def update(self, events):
         for event in events:
             if self.back_button.is_clicked(event):
-                return 'TITLE'        
+                return 'TITLE'
         return None
-    
+
 
 class ChooseScene:
     def __init__(self, title, *texts):
@@ -143,20 +147,89 @@ class ChooseScene:
                             return 'BOT_VS_BOT'
         return None
 
-class ChooseBot (ChooseScene):
+
+class ChooseBot(ChooseScene):
     def update(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i, rect in enumerate(self.rects):
-                    if rect.collidepoint(event.pos):
-                        if i == 0:  # Human vs Human
-                            return 'BOT 1'
-                        elif i == 1:  # Human vs Bot
-                            return 'BOT 2'
-                        elif i == 2:  # Bot vs Bot
-                            return 'BOT 3'
-                        else:
-                            return 'BOT 4'
+                    if i == 0:  # Human vs Human
+                        return 'EASY'
+                    elif i == 1:  # Human vs Bot
+                        return 'MEDIUM'
+                    elif i == 2:  # Bot vs Bot
+                        return 'HARD'
 
         return None
-    
+
+
+class ChessboardScene:
+    def __init__(self, title, gs):
+        self.background = pygame.Surface((WIDTH, HEIGHT))
+        self.background.fill(pygame.Color("beige"))  # Fill background with beige color
+        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (B_WIDTH, B_HEIGHT))
+        self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64, (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
+        self.title = title
+        self.gs = gs
+
+    def draw(self, screen):
+        # Display the game state on the screen
+        font = pygame.font.Font(None, 36)
+        text = font.render(self.title, True, (255, 255, 255))
+        screen.blit(text, (10, 10))
+        board = self.gs.board
+
+        load_images()
+        # Draw the chessboard
+        colors = [pygame.Color("dark green"), pygame.Color("dark green")]
+        for r in range(DIMENSION):
+            for c in range(DIMENSION):
+                color = colors[((r + c) % 2)]
+                pygame.draw.rect(screen, color, pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
+                                                            (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE,
+                                                            SQ_SIZE))  # Adjusted position
+
+        # Draw grid lines
+        for r in range(DIMENSION):  # Horizontal lines
+            pygame.draw.line(screen, pygame.Color("black"),
+                             ((WIDTH - B_WIDTH) // 2 - 64, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2), (
+                                 (WIDTH - B_WIDTH) // 2 - 64 + B_WIDTH,
+                                 r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
+            # Add row coordinates
+            row_text = font.render(str(r + 1), True, pygame.Color("black"))
+            screen.blit(row_text, ((WIDTH - B_WIDTH) // 2 - 100, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2 + SQ_SIZE // 2))
+
+        for c in range(DIMENSION):  # Vertical lines
+            pygame.draw.line(screen, pygame.Color("black"),
+                             (c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64, (HEIGHT - B_HEIGHT) // 2), (
+                                 c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64,
+                                 (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT))  # Adjusted position
+            # Add column coordinates
+            col_text = font.render(chr(ord('a') + c), True, pygame.Color("black"))
+            screen.blit(col_text, (
+                c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64 + SQ_SIZE // 2, (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT))
+
+        # Draw each piece of the board
+        for r in range(DIMENSION):
+            for c in range(DIMENSION):
+                piece = board[r][c]
+                if piece in IMAGES:  # Ensure the piece is in IMAGES dictionary
+                    screen.blit(IMAGES[piece], pygame.Rect((c * SQ_SIZE) + ((WIDTH - B_WIDTH) // 2) - 64,
+                                                           (r * SQ_SIZE) + (HEIGHT - B_HEIGHT) // 2, SQ_SIZE,
+                                                           SQ_SIZE))  # Adjusted position
+
+
+class GameOver:
+    def __init__(self, game_state):
+        self.game_state = game_state
+
+    def draw(self, screen):
+        winner = self.game_state.get_winner()
+        screen.fill((0, 0, 0))
+        font = pygame.font.Font(None, 36)
+        winner = self.game_state.get_winner()
+        if winner != 'Tie':
+            text = font.render("Game over. Winner: " + winner, True, (255, 255, 255))
+        else:
+            text = font.render("Game over. It's a Tie!", True, (255, 255, 255))
+        screen.blit(text, (10, 10))
