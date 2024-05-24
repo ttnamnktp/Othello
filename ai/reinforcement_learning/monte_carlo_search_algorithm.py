@@ -8,7 +8,7 @@ from engine.GameState import Move
 import math
 import random
 
-DEPTH = 3
+DEPTH = 5
 
 class MonteCarloTreeSearch(SearchAlgorithm):
 
