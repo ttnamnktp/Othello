@@ -2,9 +2,11 @@ from ai.ai import AI
 from ai.heuristics.coin_parity import CoinParity
 from ai.heuristics.dynamic_weight import DynamicWeight
 from ai.heuristics.static_weight import StaticWeight
+from ai.heuristics.hybrid_heuristic import HybridHeuristic, DynamicHybridHeuristic
 from ai.search_algorithms.greedy import Greedy
 from ai.search_algorithms.minimax import Minimax
 from ai.search_algorithms.minimax_alpha_beta import MinimaxAlphaBeta
+from ai.reinforcement_learning.monte_carlo_search_algorithm import MonteCarloTreeSearch
 from engine.GameState import GameState
 from ui.scenes import *
 from ui.ui import *
@@ -30,7 +32,7 @@ scenes = {
 bots = {
     'EASY': AI(heuristic=CoinParity(), algorithm=Greedy, depth=1),
     'MEDIUM': AI(heuristic=StaticWeight(), algorithm=Minimax, depth=3),
-    'HARD': AI(heuristic=DynamicWeight(), algorithm=MinimaxAlphaBeta, depth=5)
+    'HARD': AI(heuristic=StaticWeight(), algorithm=MonteCarloTreeSearch, depth=5)
 }
 
 

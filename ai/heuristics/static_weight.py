@@ -6,14 +6,14 @@ from engine.GameState import GameState
 
 class StaticWeight(Heuristic, ABC):
     STATIC_WEIGHT = [
-        [4, -3, 2, 2, 2, 2, -3, 4],
+        [50, -3, 2, 2, 2, 2, -3, 50],
         [-3, -4, -1, -1, -1, -1, -4, -3],
         [2, -1, 1, 0, 0, 1, -1, 2],
         [2, -1, 0, 1, 1, 0, -1, 2],
         [2, -1, 0, 1, 1, 0, -1, 2],
         [2, -1, 1, 0, 0, 1, -1, 2],
         [-3, -4, -1, -1, -1, -1, -4, -3],
-        [4, -3, 2, 2, 2, 2, -3, 4]
+        [50, -3, 2, 2, 2, 2, -3, 50]
     ]
 
     def evaluate(self, game_state: GameState) -> int:
