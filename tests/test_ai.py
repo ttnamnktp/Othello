@@ -82,8 +82,8 @@ def test_sample():
     mcts_ai = AI(heuristic= CoinParity(), algorithm=MonteCarloTreeSearch, depth=3, run_time=1)
 
     minimax_ai = AI(heuristic=DynamicWeight(), algorithm=Minimax, depth=3)
-    minimax_alpha_beta_ai = AI(heuristic=DynamicWeight(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
-    mcts_ai = AI(heuristic=StaticWeight(), algorithm=MonteCarloTreeSearch, depth=3, run_time=1)
+    minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
+    mcts_ai = AI(heuristic=DynamicWeight(), algorithm=MonteCarloTreeSearch, depth=3, run_time=1)
     minimax_alpha_beta_ai_dynamic = AI(heuristic=DynamicWeight(), algorithm=MinimaxAlphaBeta, depth=4, run_time=1)
     minimax_alpha_beta_ai_static = AI(heuristic=StaticWeight(), algorithm=MinimaxAlphaBeta, depth=4, run_time=1)
     minimax_alpha_beta_ai_hybrid = AI(heuristic=HybridHeuristic(), algorithm=MinimaxAlphaBeta, depth=4, run_time=1)
@@ -96,7 +96,5 @@ def test_sample():
     # ai_vs_ai(bot1=random_ai, bot2=greedy_ai)
     # ai_vs_ai(bot1=minimax_ai, bot2=greedy_ai)
     # ai_vs_ai(bot1=minimax_ai, bot2=minimax_alpha_beta_ai)
-    return ai_vs_ai(bot1=minimax_alpha_beta_ai_dynamic_hybrid, bot2=minimax_alpha_beta_ai_hybrid)
+    ai_vs_ai(bot1=minimax_alpha_beta_ai, bot2=mcts_ai)
 
-if __name__ == "__main__":
-    test_sample()

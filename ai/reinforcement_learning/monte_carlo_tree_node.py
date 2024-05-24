@@ -8,7 +8,7 @@ class Node():
         self.depth = depth
 
         # check if it is a terminal node
-        if self.game_state.is_game_over():
+        if self.game_state.is_terminal():
             self.is_terminal = True
 
         # init is fully expanded flag
@@ -25,5 +25,16 @@ class Node():
 
         # init current node's children
         self.children_node = {}
+
+    def check_fully_expanded(self):
+        states = self.game_state.generate_states()
+        # loop over generated states (moves)
+        for state in states:
+            # make sure that current state (move) is not present in child nodes
+            if str(state[0].board) not in self.children_node:
+                self.is_fully_expanded = False
+                return False
+        self.is_fully_expanded = True
+        return True
 
 

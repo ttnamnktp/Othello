@@ -1,5 +1,5 @@
 from .Move import Move
-
+import copy
 class GameState:
     def __init__(self, size=8):
         self.size = size
@@ -44,13 +44,16 @@ class GameState:
 
     def generate_states(self):
 
+        # general states include states and their appropriate move
         states = []
 
         moves = Move.get_valid_moves(self)
 
         for move in moves:
-            game_state = GameState()
+            game_state = copy.deepcopy(self)
             row, col = move
+            # print(move)
+            # print(game_state.board)
             game_state.board[row][col] = game_state.current_player
             game_state.flip_disks(move)
             game_state.black_count = sum(row.count('B') for row in game_state.board)
@@ -60,3 +63,10 @@ class GameState:
             states.append([game_state, move])
 
         return states
+
+    def is_terminal(self):
+        moves = Move.get_valid_moves(self)
+        if len(moves) == 0:
+            return True
+        else:
+            return False
