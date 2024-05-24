@@ -8,7 +8,7 @@ from engine.GameState import Move
 import math
 import random
 
-DEPTH = 5
+DEPTH = 3
 
 class MonteCarloTreeSearch(SearchAlgorithm):
 
@@ -39,7 +39,8 @@ class MonteCarloTreeSearch(SearchAlgorithm):
 
         except:
             valid_moves = Move.get_valid_moves(game_state)
-            return random.choice(valid_moves)
+            # return random.choice(valid_moves)
+            pass
 
     # select most promising node
     def select(self, node):
@@ -88,7 +89,7 @@ class MonteCarloTreeSearch(SearchAlgorithm):
     def simulation(self, game_state):
         # make random moves for both sides until terminal state of the game is reached
         depth_it = 0
-        while not game_state.is_game_over() and depth_it < 2:
+        while not game_state.is_game_over() and depth_it < 1:
         # while not game_state.is_game_over():
 
             depth_it = depth_it + 1

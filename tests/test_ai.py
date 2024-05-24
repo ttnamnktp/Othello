@@ -13,6 +13,7 @@ from ai.reinforcement_learning.monte_carlo_search_algorithm import MonteCarloTre
 from engine.GameState import GameState
 from engine.Move import Move
 
+# accept this
 
 def print_state(state):
     for row in state.board:
@@ -83,7 +84,7 @@ def test_sample():
 
     minimax_ai = AI(heuristic=DynamicWeight(), algorithm=Minimax, depth=3)
     minimax_alpha_beta_ai = AI(heuristic=CoinParity(), algorithm=MinimaxAlphaBeta, depth=5, run_time=1)
-    mcts_ai = AI(heuristic=DynamicWeight(), algorithm=MonteCarloTreeSearch, depth=3, run_time=1)
+    mcts_ai = AI(heuristic=StaticWeight(), algorithm=MonteCarloTreeSearch, depth=3, run_time=1)
     minimax_alpha_beta_ai_dynamic = AI(heuristic=DynamicWeight(), algorithm=MinimaxAlphaBeta, depth=4, run_time=1)
     minimax_alpha_beta_ai_static = AI(heuristic=StaticWeight(), algorithm=MinimaxAlphaBeta, depth=4, run_time=1)
     minimax_alpha_beta_ai_hybrid = AI(heuristic=HybridHeuristic(), algorithm=MinimaxAlphaBeta, depth=4, run_time=1)
