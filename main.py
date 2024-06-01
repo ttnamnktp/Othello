@@ -98,16 +98,29 @@ def main():
                             scene = scenes['CHOOSE_BOT']
                         elif selected_option == 'TITLE':
                             scene = scenes['TITLE']
+
                 elif scene == scenes['CHOOSE_BOT']:
                     selected_option = scene.update([event])
                     if selected_option == 'CHOOSE_MODE':
                         scene = scenes['CHOOSE_MODE']
-                    elif selected_option != 'CHOOSE_MODE':
-                        bot = bots[selected_option]
+                    elif selected_option == 'EASY':
+                        bot = bots['EASY']
                         chess_bot = ChessBot(gs, bot)
                         scene = scenes['GAME_STATE']
                         human_vs_bot_mode = True
-
+                    elif selected_option == 'MEDIUM':
+                        bot = bots['MEDIUM']
+                        chess_bot = ChessBot(gs, bot)
+                        scene = scenes['GAME_STATE']
+                        human_vs_bot_mode = True
+                    elif selected_option == 'HARD':
+                        bot = bots['HARD']
+                        chess_bot = ChessBot(gs, bot)
+                        scene = scenes['GAME_STATE']
+                        human_vs_bot_mode = True
+                    elif selected_option == 'CHOOSE_MODE':
+                        scene = scenes['CHOOSE_MODE']
+                    
         if human_vs_bot_mode and scene == scenes['GAME_STATE']:
             chess_bot.run_game(screen)  # Run the game in ChessBot
             scenes['GAME_OVER'] = GameOver(gs)
