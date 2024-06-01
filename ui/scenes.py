@@ -103,6 +103,19 @@ class HelpScene:
 
     def update(self, events):
         for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i, rect in enumerate(self.rects):
+                    if rect.collidepoint(event.pos):
+                        if i == 0:  # Human vs Human
+                            return 'HUMAN_VS_HUMAN'
+                        elif i == 1:  # Human vs Bot
+                            return 'HUMAN_VS_BOT'         
+                if self.back_button.is_clicked(event):
+                    return 'TITLE'
+        return None
+    
+    def update(self, events):
+        for event in events:
             if self.back_button.is_clicked(event):
                 return 'TITLE'
         return None
@@ -116,6 +129,7 @@ class ChooseScene:
         self.rects = []
         self.texts = texts
         self.title = title
+        self.back_button = Button("ui/image/back.png", 9, (WIDTH // 2, HEIGHT // 1.25))
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
@@ -133,8 +147,18 @@ class ChooseScene:
                 pygame.draw.rect(screen, pygame.Color(120, 200, 112), rect)
             pygame.draw.rect(screen, pygame.Color(120, 8, 8), rect, 5)
             screen.blit(text, textRect)
-            
 
+        self.back_button.draw(screen)
+
+
+    def update(self, events):
+        for event in events:
+            if self.play_button.is_clicked(event):
+                return 'CHOOSE_MODE'
+            elif self.help_button.is_clicked(event):
+                return 'HELP'
+        return None
+    
     def update(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -143,9 +167,9 @@ class ChooseScene:
                         if i == 0:  # Human vs Human
                             return 'HUMAN_VS_HUMAN'
                         elif i == 1:  # Human vs Bot
-                            return 'HUMAN_VS_BOT'
-                        elif i == 2:  # Bot vs Bot
-                            return 'BOT_VS_BOT'
+                            return 'HUMAN_VS_BOT'         
+                if self.back_button.is_clicked(event):
+                    return 'TITLE'
         return None
 
 
@@ -154,13 +178,16 @@ class ChooseBot(ChooseScene):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i, rect in enumerate(self.rects):
-                    if i == 0:  # Human vs Human
-                        return 'EASY'
-                    elif i == 1:  # Human vs Bot
-                        return 'MEDIUM'
-                    elif i == 2:  # Bot vs Bot
-                        return 'HARD'
-
+                    if rect.collidepoint(event.pos):
+                        if i == 0:  # Human vs Human
+                            return 'EASY'
+                        elif i == 1:  # Human vs Bot
+                            return 'MEDIUM' 
+                        elif i == 2:  # Bot vs Bot
+                            return 'HARD'
+                if self.back_button.is_clicked(event):
+                    print("back")
+                    return 'CHOOSE_MODE'
         return None
 
 

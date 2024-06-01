@@ -22,7 +22,7 @@ IMAGES = {}
 
 scenes = {
     'TITLE': SimpleScene('Cờ lật'),
-    'CHOOSE_MODE': ChooseScene('Chọn chế độ chơi', 'Người Vs Người', 'Người Vs Máy', 'Máy Vs Máy'),
+    'CHOOSE_MODE': ChooseScene('Chọn chế độ chơi', 'Người Vs Người', 'Người Vs Máy'),
     'CHOOSE_BOT': ChooseBot('Chọn độ khó', 'EASY', 'MEDIUM', 'HARD'),
     'HELP': HelpScene('Help', 'Othello là một môn thể thao trí tuệ 2 người chơi'),
     'GAME_STATE': ChessboardScene('Othello', GameState()),
@@ -73,12 +73,15 @@ def main():
                         scene = scenes['HELP']
                 elif result == 'HELP':
                     result = scene.update([event])
-                    if result == 'TITLE':
+                    if result != 'TITLE':
+                        scene = scenes['HELP']
+                    elif result == 'TITLE':
                         scene = scenes['TITLE']
                 # Inside the main loop, after handling mouse events in the ChooseScene
                 elif scene == scenes['CHOOSE_MODE']:
                     selected_option = scene.update([event])
                     if selected_option:
+                        print("ok")
                         if selected_option == 'HUMAN_VS_HUMAN':
                             scene = scenes['GAME_STATE']
                             chess_gui.run_game(screen)  # Run the game in ChessGUI
@@ -93,9 +96,13 @@ def main():
                             #  the algorithm, heuristic and depth of the bot. There will also be a back button to
                             #  return to the ChooseScene
                             scene = scenes['CHOOSE_BOT']
+                        elif selected_option == 'TITLE':
+                            scene = scenes['TITLE']
                 elif scene == scenes['CHOOSE_BOT']:
                     selected_option = scene.update([event])
-                    if selected_option:
+                    if selected_option == 'CHOOSE_MODE':
+                        scene = scenes['CHOOSE_MODE']
+                    elif selected_option != 'CHOOSE_MODE':
                         bot = bots[selected_option]
                         chess_bot = ChessBot(gs, bot)
                         scene = scenes['GAME_STATE']
