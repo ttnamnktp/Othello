@@ -133,6 +133,7 @@ class ChooseScene:
                 pygame.draw.rect(screen, pygame.Color(120, 200, 112), rect)
             pygame.draw.rect(screen, pygame.Color(120, 8, 8), rect, 5)
             screen.blit(text, textRect)
+            
 
     def update(self, events):
         for event in events:
@@ -166,19 +167,38 @@ class ChooseBot(ChooseScene):
 class ChessboardScene:
     def __init__(self, title, gs):
         self.background = pygame.Surface((WIDTH, HEIGHT))
-        self.background.fill(pygame.Color("beige"))  # Fill background with beige color
-        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (B_WIDTH, B_HEIGHT))
-        self.background.blit(bg, ((WIDTH - B_WIDTH) // 2 - 64, (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
+        # self.background.fill(pygame.Color("beige"))  # Fill background with beige color
+        # bg = pygame.transform.scale(pygame.image.load("ui/image/beigebg.png"), (WIDTH, HEIGHT))
+        # self.background.blit(bg,(1,1))  # Adjusted position
         self.title = title
         self.gs = gs
+        
 
     def draw(self, screen):
         # Display the game state on the screen
+        screen.fill((154, 136, 113))
+        bg = pygame.transform.scale(pygame.image.load("ui/image/beigebg.png"), (WIDTH, HEIGHT))
+        self.background.blit(bg,(0,0))  # Adjusted position
         font = pygame.font.Font(None, 36)
         text = font.render(self.title, True, (255, 255, 255))
         screen.blit(text, (10, 10))
         board = self.gs.board
+        
+        B_count = self.gs.black_count
+        W_count = self.gs.white_count
+        turn = self.gs.current_player
+        
+        text_1 = "Black discs: " + str(int(B_count))
+        text_2 = "White discs: " + str(int(W_count))
+        text_turn ="Current player: " + str(turn)
+        
+        text_3 = font.render(text_1,True,(0,0,0))
+        text_4 = font.render(text_2,True,(255,255,255))
+        text_5 = font.render(text_turn,True, (0,0,0))
 
+        screen.blit(text_3, (630,200))
+        screen.blit(text_4, (630,300))
+        screen.blit(text_5, (620,400))
         load_images()
         # Draw the chessboard
         colors = [pygame.Color("dark green"), pygame.Color("dark green")]
@@ -190,24 +210,29 @@ class ChessboardScene:
                                                             SQ_SIZE))  # Adjusted position
 
         # Draw grid lines
-        for r in range(DIMENSION):  # Horizontal lines
+        for r in range(DIMENSION + 1):  # Horizontal lines
             pygame.draw.line(screen, pygame.Color("black"),
                              ((WIDTH - B_WIDTH) // 2 - 64, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2), (
                                  (WIDTH - B_WIDTH) // 2 - 64 + B_WIDTH,
                                  r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2))  # Adjusted position
+            
+        for r in range(DIMENSION):
             # Add row coordinates
             row_text = font.render(str(r + 1), True, pygame.Color("black"))
             screen.blit(row_text, ((WIDTH - B_WIDTH) // 2 - 100, r * SQ_SIZE + (HEIGHT - B_HEIGHT) // 2 + SQ_SIZE // 2))
 
-        for c in range(DIMENSION):  # Vertical lines
+        for c in range(DIMENSION+1):  # Vertical lines
             pygame.draw.line(screen, pygame.Color("black"),
                              (c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64, (HEIGHT - B_HEIGHT) // 2), (
                                  c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64,
                                  (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT))  # Adjusted position
+            
+        for c in range(DIMENSION):
             # Add column coordinates
             col_text = font.render(chr(ord('a') + c), True, pygame.Color("black"))
             screen.blit(col_text, (
-                c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64 + SQ_SIZE // 2, (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT))
+                c * SQ_SIZE + ((WIDTH - B_WIDTH) // 2) - 64 + SQ_SIZE // 2, (HEIGHT - B_HEIGHT) // 2 + B_HEIGHT + 10))
+            
 
         # Draw each piece of the board
         for r in range(DIMENSION):
@@ -225,11 +250,14 @@ class GameOver:
 
     def draw(self, screen):
         winner = self.game_state.get_winner()
-        screen.fill((0, 0, 0))
+        screen.fill((197, 184, 186))
         font = pygame.font.Font(None, 36)
         winner = self.game_state.get_winner()
         if winner != 'Tie':
-            text = font.render("Game over. Winner: " + winner, True, (255, 255, 255))
+            if winner == 'B':
+                text = font.render("Game over. Winner: Black ", True, (0, 0, 0))
+            if winner == 'W':
+                text = font.render("Game over. Winner: White ", True, (255, 255, 255))
         else:
-            text = font.render("Game over. It's a Tie!", True, (255, 255, 255))
-        screen.blit(text, (10, 10))
+            text = font.render("Game over. It's a Tie!", True, (0, 0, 0))
+        screen.blit(text, (250,HEIGHT//2))

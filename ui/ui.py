@@ -22,6 +22,7 @@ IMAGES = {}
 def load_images():
     pieces = ['W', 'B']
     for piece in pieces:
+        
         IMAGES[piece] = pygame.transform.scale(
             pygame.image.load("ui/image/" + str(piece).lower() + ".png"), (SQ_SIZE, SQ_SIZE)
         )
@@ -36,7 +37,7 @@ class ChessGUI:
         load_images()
 
         # Create a ChessboardScene instance
-        self.chessboard_scene = ChessboardScene("Chessboard", gs)
+        self.chessboard_scene = ChessboardScene("Othello", gs)
 
     def handle_events(self):
         for event in pygame.event.get():
