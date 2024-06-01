@@ -23,9 +23,9 @@ IMAGES = {}
 scenes = {
     'TITLE': SimpleScene('Cờ lật'),
     'CHOOSE_MODE': ChooseScene('Chọn chế độ chơi', 'Người Vs Người', 'Người Vs Máy', 'Máy Vs Máy'),
-    'CHOOSE_BOT': ChooseBot('Chọn do kho', 'EASY', 'MEDIUM', 'HARD'),
-    'HELP': HelpScene('Help', 'Your help text here.'),
-    'GAME_STATE': ChessboardScene('Cờ lật', GameState()),
+    'CHOOSE_BOT': ChooseBot('Chọn độ khó', 'EASY', 'MEDIUM', 'HARD'),
+    'HELP': HelpScene('Help', 'Othello là một môn thể thao trí tuệ 2 người chơi'),
+    'GAME_STATE': ChessboardScene('Othello', GameState()),
     'GAME_OVER': None
 }
 
