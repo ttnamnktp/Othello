@@ -203,8 +203,8 @@ class ChessboardScene:
 
     def draw(self, screen):
         # Display the game state on the screen
-        screen.fill((154, 136, 113))
-        bg = pygame.transform.scale(pygame.image.load("ui/image/beigebg.png"), (WIDTH, HEIGHT))
+        screen.fill((224, 206, 173))
+        bg = pygame.transform.scale(pygame.image.load("ui/image/bg.png"), (WIDTH, HEIGHT))
         self.background.blit(bg,(0,0))  # Adjusted position
         font = pygame.font.Font(None, 36)
         text = font.render(self.title, True, (255, 255, 255))
