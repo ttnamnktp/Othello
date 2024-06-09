@@ -274,10 +274,12 @@ class ChessboardScene:
 class GameOver:
     def __init__(self, game_state):
         self.game_state = game_state
+        self.chessboard_scene = ChessboardScene("Othello", game_state)
 
     def draw(self, screen):
-        winner = self.game_state.get_winner()
         screen.fill((197, 184, 186))
+        self.chessboard_scene.draw(screen)
+        winner = self.game_state.get_winner()
         font = pygame.font.Font(None, 36)
         winner = self.game_state.get_winner()
         if winner != 'Tie':
@@ -287,4 +289,6 @@ class GameOver:
                 text = font.render("Game over. Winner: White ", True, (255, 255, 255))
         else:
             text = font.render("Game over. It's a Tie!", True, (0, 0, 0))
-        screen.blit(text, (250,HEIGHT//2))
+        screen.blit(text, (250,10))
+        
+    
