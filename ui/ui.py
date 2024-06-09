@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 from engine.Move import Move
@@ -22,7 +24,6 @@ IMAGES = {}
 def load_images():
     pieces = ['W', 'B']
     for piece in pieces:
-        
         IMAGES[piece] = pygame.transform.scale(
             pygame.image.load("ui/image/" + str(piece).lower() + ".png"), (SQ_SIZE, SQ_SIZE)
         )
@@ -53,53 +54,41 @@ class ChessGUI:
         col = (x - ((WIDTH - B_WIDTH) // 2) + 64) // SQ_SIZE
 
         if 0 <= row < DIMENSION and 0 <= col < DIMENSION:
-            # if self.selected_piece:
-            #     move = (row, col)
-            #     if move in self.valid_moves:
-            #         self.make_move(move)
-            #         if not Move.check_valid_moves_and_set_pass(self.gs):  # Check if the other player has valid moves
-            #             print("Game Over")
-            #             self.running = False
-            #     else:
-            #         print("Move is invalid")
-            #     self.selected_piece = None
-            #     self.valid_moves = Move.get_valid_moves(self.gs)
-            # else:
-            #     self.select_piece(row, col)
-
             move = (row, col)
             if move in self.valid_moves:
                 self.make_move(move)
-                if not Move.check_valid_moves_and_set_pass(self.gs):  # Check if the other player has valid moves
-                    print("Game Over")
-                    self.running = False
             else:
                 print("Move is invalid")
             self.selected_piece = None
-            self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
 
     def select_piece(self, row, col):
         piece = self.gs.board[row][col]
         if piece == self.gs.current_player:
             self.selected_piece = (row, col)
-            self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
+            # self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
             print(f"Valid moves: {self.valid_moves}")
 
     def make_move(self, move):
         Move.make_move(self.gs, move)
         self.selected_piece = None
-        self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
 
     def run_game(self, screen):
         self.running = True
         while self.running:
-            self.handle_events()
-            self.draw_board(screen)
-            self.highlight_valid_moves(screen)  # Highlight valid moves
-            pygame.display.flip()
             if self.gs.is_game_over():
                 print("Game over")
                 self.running = False  # End the game loop when the game is over
+                break
+
+            self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
+            self.draw_board(screen)
+            self.highlight_valid_moves(screen)  # Highlight valid moves
+            pygame.display.flip()
+
+            if not self.valid_moves:
+                continue
+
+            self.handle_events()
 
     def highlight_valid_moves(self, screen):
         for move in self.valid_moves:
@@ -124,17 +113,24 @@ class ChessBot(ChessGUI):
         self.human_turn = True
 
     def run_game(self, screen):
-        self.running = True
         while self.running:
-            self.handle_events()
-            self.draw_board(screen)
-            self.highlight_valid_moves(screen)
-            pygame.display.flip()
-            if not self.human_turn:
-                self.bot_turn()
             if self.gs.is_game_over():
                 print("Game over")
                 self.running = False
+                break
+
+            self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
+            self.draw_board(screen)
+            self.highlight_valid_moves(screen)
+            pygame.display.flip()
+
+            if not self.valid_moves:
+                self.human_turn = False if self.human_turn else True
+                continue
+            if self.human_turn:
+                self.handle_events()
+            else:
+                self.bot_turn()
 
     def handle_mouse_click(self):
         if not self.human_turn:
@@ -150,14 +146,9 @@ class ChessBot(ChessGUI):
             else:
                 print("Move is invalid")
             self.selected_piece = None
-            self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
 
     def bot_turn(self):
-        if not self.gs.is_game_over() and not self.human_turn:
-            best_move = self.bot.return_best_move(self.gs)
-            Move.make_move(self.gs, best_move)
-            self.valid_moves = Move.check_valid_moves_and_set_pass(self.gs)
-            self.human_turn = True
-            if self.gs.is_game_over():
-                print("Game over")
-                self.running = False
+        time.sleep(0.5)
+        best_move = self.bot.return_best_move(self.gs)
+        Move.make_move(self.gs, best_move)
+        self.human_turn = True
