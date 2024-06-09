@@ -82,6 +82,7 @@ class HelpScene:
         self.title = title
         self.back_button = Button("ui/image/back.png", 9, (WIDTH // 2, HEIGHT // 1.25))
 
+
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         n = 1
@@ -100,19 +101,6 @@ class HelpScene:
         screen.blit(text, textRect)
 
         self.back_button.draw(screen)
-
-    def update(self, events):
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for i, rect in enumerate(self.rects):
-                    if rect.collidepoint(event.pos):
-                        if i == 0:  # Human vs Human
-                            return 'HUMAN_VS_HUMAN'
-                        elif i == 1:  # Human vs Bot
-                            return 'HUMAN_VS_BOT'         
-                if self.back_button.is_clicked(event):
-                    return 'TITLE'
-        return None
     
     def update(self, events):
         for event in events:
@@ -174,6 +162,10 @@ class ChooseScene:
 
 
 class ChooseBot(ChooseScene):
+    def __init__(self, title, *texts):
+        super().__init__(title, *texts)
+        self.back_button = Button("ui/image/back.png", 9, (WIDTH // 2, HEIGHT // 1.1))
+
     def update(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -186,7 +178,6 @@ class ChooseBot(ChooseScene):
                         elif i == 2:  # Bot vs Bot
                             return 'HARD'
                 if self.back_button.is_clicked(event):
-                    print("back")
                     return 'CHOOSE_MODE'
         return None
 
@@ -275,6 +266,7 @@ class GameOver:
     def __init__(self, game_state):
         self.game_state = game_state
         self.chessboard_scene = ChessboardScene("Othello", game_state)
+        self.back_button = Button("ui/image/back.png", 9, (WIDTH // 1.165, HEIGHT // 1.2))
 
     def draw(self, screen):
         screen.fill((197, 184, 186))
@@ -289,6 +281,12 @@ class GameOver:
                 text = font.render("Game over. Winner: White ", True, (255, 255, 255))
         else:
             text = font.render("Game over. It's a Tie!", True, (0, 0, 0))
+        self.back_button.draw(screen)
         screen.blit(text, (250,10))
         
+    def update(self, events):
+        for event in events:
+            if self.back_button.is_clicked(event):
+                return 'TITLE'
+        return None
     

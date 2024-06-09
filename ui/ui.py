@@ -115,7 +115,7 @@ class ChessBot(ChessGUI):
     def run_game(self, screen):
         while self.running:
             if self.gs.is_game_over():
-                print("Game over")
+                # print("Game over")
                 self.running = False
                 break
 
@@ -144,11 +144,12 @@ class ChessBot(ChessGUI):
                 self.make_move(move)
                 self.human_turn = False
             else:
-                print("Move is invalid")
+                # print("Move is invalid")
+                pass
             self.selected_piece = None
 
     def bot_turn(self):
-        time.sleep(0.5)
+        # time.sleep(0.5)
         best_move = self.bot.return_best_move(self.gs)
         Move.make_move(self.gs, best_move)
         self.human_turn = True
