@@ -60,67 +60,60 @@ def main():
     human_vs_bot_mode = False
 
     while running:  # Main game loop
-        for event in pygame.event.get():
+        events = pygame.event.get()  # Collect all events at the start of the loop
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False  # Exit the loop and close the program if the user closes the window
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                # Handle mouse clicks
-                if scene == scenes['TITLE']:
-                    result = scene.update([event])  # Pass the event to the scene's update method
-                    if result == 'CHOOSE_MODE':
-                        scene = scenes['CHOOSE_MODE']
-                    elif result == 'HELP':
-                        scene = scenes['HELP']
-                elif result == 'HELP':
-                    result = scene.update([event])
-                    if result != 'TITLE':
-                        scene = scenes['HELP']
-                    elif result == 'TITLE':
-                        scene = scenes['TITLE']
-                # Inside the main loop, after handling mouse events in the ChooseScene
-                elif scene == scenes['CHOOSE_MODE']:
-                    selected_option = scene.update([event])
-                    if selected_option:
-                        print("ok")
-                        if selected_option == 'HUMAN_VS_HUMAN':
-                            scene = scenes['GAME_STATE']
-                            chess_gui.run_game(screen)  # Run the game in ChessGUI
-                            scenes['GAME_OVER'] = GameOver(gs)
-                            scene = scenes['GAME_OVER']
-                            # Set up the game for Human vs Human
-                        elif selected_option == 'HUMAN_VS_BOT':
-                            # TODO: Display the ChooseBot scene
-                            #  User can choose between 3 difficulties: Easy, Medium, and Hard
-                            #  Each difficulty is a different AI.
-                            #  There will also be a custom difficulty option where the user can choose
-                            #  the algorithm, heuristic and depth of the bot. There will also be a back button to
-                            #  return to the ChooseScene
-                            scene = scenes['CHOOSE_BOT']
-                        elif selected_option == 'TITLE':
-                            scene = scenes['TITLE']
 
-                elif scene == scenes['CHOOSE_BOT']:
-                    selected_option = scene.update([event])
-                    if selected_option == 'CHOOSE_MODE':
-                        scene = scenes['CHOOSE_MODE']
-                    elif selected_option == 'EASY':
-                        bot = bots['EASY']
-                        chess_bot = ChessBot(gs, bot)
-                        scene = scenes['GAME_STATE']
-                        human_vs_bot_mode = True
-                    elif selected_option == 'MEDIUM':
-                        bot = bots['MEDIUM']
-                        chess_bot = ChessBot(gs, bot)
-                        scene = scenes['GAME_STATE']
-                        human_vs_bot_mode = True
-                    elif selected_option == 'HARD':
-                        bot = bots['HARD']
-                        chess_bot = ChessBot(gs, bot)
-                        scene = scenes['GAME_STATE']
-                        human_vs_bot_mode = True
-                    elif selected_option == 'CHOOSE_MODE':
-                        scene = scenes['CHOOSE_MODE']
-                    
+        # Handle scene updates based on current scene
+        if scene == scenes['TITLE']:
+            result = scene.update(events)  # Pass the events to the scene's update method
+            if result == 'CHOOSE_MODE':
+                scene = scenes['CHOOSE_MODE']
+            elif result == 'HELP':
+                scene = scenes['HELP']
+        elif scene == scenes['HELP']:
+            result = scene.update(events)
+            if result == 'TITLE':
+                scene = scenes['TITLE']
+        elif scene == scenes['CHOOSE_MODE']:
+            selected_option = scene.update(events)
+            if selected_option:
+                if selected_option == 'HUMAN_VS_HUMAN':
+                    scene = scenes['GAME_STATE']
+                    chess_gui.run_game(screen)  # Run the game in ChessGUI
+                    scenes['GAME_OVER'] = GameOver(gs)
+                    scene = scenes['GAME_OVER']
+                elif selected_option == 'HUMAN_VS_BOT':
+                    scene = scenes['CHOOSE_BOT']
+                elif selected_option == 'TITLE':
+                    scene = scenes['TITLE']
+        elif scene == scenes['CHOOSE_BOT']:
+            selected_option = scene.update(events)
+            if selected_option == 'CHOOSE_MODE':
+                scene = scenes['CHOOSE_MODE']
+            elif selected_option == 'EASY':
+                bot = bots['EASY']
+                chess_bot = ChessBot(gs, bot)
+                scene = scenes['GAME_STATE']
+                human_vs_bot_mode = True
+            elif selected_option == 'MEDIUM':
+                bot = bots['MEDIUM']
+                chess_bot = ChessBot(gs, bot)
+                scene = scenes['GAME_STATE']
+                human_vs_bot_mode = True
+            elif selected_option == 'HARD':
+                bot = bots['HARD']
+                chess_bot = ChessBot(gs, bot)
+                scene = scenes['GAME_STATE']
+                human_vs_bot_mode = True
+            elif selected_option == 'CHOOSE_MODE':
+                scene = scenes['CHOOSE_MODE']
+        elif scene == scenes['GAME_OVER']:
+            result = scene.update(events)
+            if result == 'TITLE':
+                scene = scenes['TITLE']
+
         if human_vs_bot_mode and scene == scenes['GAME_STATE']:
             chess_bot.run_game(screen)  # Run the game in ChessBot
             scenes['GAME_OVER'] = GameOver(gs)

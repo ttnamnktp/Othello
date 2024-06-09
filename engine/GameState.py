@@ -34,7 +34,7 @@ class GameState:
         return self.black_pass and self.white_pass
 
     def get_winner(self):
-        print(f"Black: {self.black_count}, White: {self.white_count}")
+        # print(f"Black: {self.black_count}, White: {self.white_count}")
         if self.black_count > self.white_count:
             return 'B'
         elif self.black_count < self.white_count:
