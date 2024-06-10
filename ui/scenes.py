@@ -127,7 +127,7 @@ class ChooseScene:
             font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
             text = font.render(text, True, pygame.Color(144, 8, 8))
             textRect = text.get_rect()
-            textRect.center = (WIDTH // 2, (HEIGHT // 8 + HEIGHT // 5 * n))
+            textRect.center = (WIDTH // 2, (HEIGHT // 8 + HEIGHT // 5 * n - 10))
             rect = pygame.Rect((WIDTH - WIDTH_BOX) // 2, textRect.top, WIDTH_BOX, HEIGHT_BOX)
             self.rects.append(rect)
             n += 1
@@ -165,6 +165,27 @@ class ChooseBot(ChooseScene):
     def __init__(self, title, *texts):
         super().__init__(title, *texts)
         self.back_button = Button("ui/image/back.png", 9, (WIDTH // 2, HEIGHT // 1.1))
+
+    def draw(self, screen):
+        screen.blit(self.background, (0, 0))
+        n = 1
+
+        for text in self.texts:
+            font = pygame.font.Font('ui/font/iCielBCDDCHardwareRough-Compressed.ttf', 35)
+            text_surface = font.render(text, True, pygame.Color(144, 8, 8))
+            textRect = text_surface.get_rect()
+            textRect.center = (WIDTH // 2, (HEIGHT // 8 + HEIGHT // 5 * n -20))
+            rect = pygame.Rect((WIDTH - WIDTH_BOX) // 2, textRect.top, WIDTH_BOX, HEIGHT_BOX)
+            self.rects.append(rect)
+            n += 1
+            if rect.collidepoint(pygame.mouse.get_pos()):
+                pygame.draw.rect(screen, pygame.Color(120, 200, 112), rect)
+            pygame.draw.rect(screen, pygame.Color(120, 8, 8), rect, 5)
+            # Center the text vertically within the rectangle box
+            textRect.centery = rect.centery
+            screen.blit(text_surface, textRect)
+
+        self.back_button.draw(screen)
 
     def update(self, events):
         for event in events:
