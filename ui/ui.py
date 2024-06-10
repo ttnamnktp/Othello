@@ -149,7 +149,7 @@ class ChessBot(ChessGUI):
             self.selected_piece = None
 
     def bot_turn(self):
-        # time.sleep(0.5)
+        time.sleep(0.5)
         best_move = self.bot.return_best_move(self.gs)
         Move.make_move(self.gs, best_move)
         self.human_turn = True
