@@ -45,6 +45,10 @@ $$
 
 where $w_i$ is the accumulated reward of child $i$, $n_i$ its visit count, $N$ the parent visit count, and $C$ an exploration parameter.
 
+![UCB selection formula](assets/images/ucb-formula.png)
+
+*Figure 3. Upper confidence bound (UCB) selection score.*
+
 ## Heuristic evaluation
 
 ### 1. Coin Parity and Static Weight
@@ -53,7 +57,7 @@ where $w_i$ is the accumulated reward of child $i$, $n_i$ its visit count, $N$ t
 
 ![Static positional weight matrix](assets/images/static-weight-matrix.png)
 
-*Figure 3. Static positional weight matrix for Othello.*
+*Figure 4. Static positional weight matrix for Othello.*
 
 ### 2. Hybrid Heuristic
 
@@ -92,27 +96,27 @@ We compare **Coin Parity** and **Static Weight** against **Hybrid Heuristic**, *
 
 ![Comparison against coin parity](assets/images/coin-parity-comparison.png)
 
-*Figure 4. Win-rate comparisons against Coin Parity.*
+*Figure 5. Win-rate comparisons against Coin Parity.*
 
 ![Comparison against static weight](assets/images/static-weight-comparison.png)
 
-*Figure 5. Win-rate comparisons against Static Weight.*
+*Figure 6. Win-rate comparisons against Static Weight.*
 
 ### MCTS comparisons
 
-The experiments compare MCTS and other search methods under **Static Weight**, **Coin Parity**, and **Dynamic Weight** evaluations. In these course-project comparisons, heuristic-guided MCTS showed improved win rates relative to the traditional baseline.
+The experiments compare MCTS and other search methods under **Static Weight**, **Coin Parity**, and **Dynamic Weight** evaluations. In these course-project comparisons, heuristic-guided MCTS showed improved win rates relative to the traditional MCTS baseline.
 
 ![MCTS with static weight](assets/images/mcts-static-weight.png)
 
-*Figure 6. MCTS comparisons using Static Weight.*
+*Figure 7. MCTS comparisons using Static Weight.*
 
 ![MCTS with coin parity](assets/images/mcts-coin-parity.png)
 
-*Figure 7. MCTS comparisons using Coin Parity.*
+*Figure 8. MCTS comparisons using Coin Parity.*
 
 ![MCTS with dynamic weight](assets/images/mcts-dynamic-weight.png)
 
-*Figure 8. MCTS comparisons using Dynamic Weight.*
+*Figure 9. MCTS comparisons using Dynamic Weight.*
 
 > Experimental sample sizes, random seeds, and confidence intervals are not documented. These graphs should be interpreted as **course-project results**, not statistically validated benchmark claims.
 
@@ -154,7 +158,7 @@ Potential next steps include refining the graphical interface, running larger-sc
 
 **Backend:** Trần Thành Nam, Vũ Việt Anh, Dư Vũ Mạnh Đức.  
 **Frontend:** Trần Minh Huyền, Nguyễn Lê Quý Dương.  
-**Lecturer:** Assoc. Prof. Lê Thanh Hương.
+**Supervisor:** Assoc. Prof. Lê Thanh Hương.
 
 The backend team worked on game architecture, search algorithms, heuristic and MCTS improvements, evaluation, and reporting. The frontend team worked on interface design, implementation, and testing.
 
